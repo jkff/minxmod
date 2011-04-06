@@ -71,6 +71,9 @@ Driver:
 
     newVar own1 False
     newVar own2 False
+    newVar flag1 False
+    newVar flag2 False
+    newVar victim 0
     spawn (worker 1)
     spawn (worker 2)
     label check: 
