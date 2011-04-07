@@ -7,8 +7,6 @@ import qualified Data.Map as M
 data Insn =
     Label String Insn
   | Block [Insn]
-  | NewVar String Value
-  | NewMon String
   | Jmp String
   | JmpCond String
   | Get String
@@ -19,6 +17,20 @@ data Insn =
   | Leave String
   | Spawn String Prog
   | Assert String
+
+instance Show Insn where
+  show (Label s i) = s ++ ": " ++ show i
+  show (Block is) = "block [" ++ show is ++ "]"
+  show (Jmp s) = "jmp " ++ s
+  show (JmpCond s) = "jmpcond " ++ s 
+  show (Get s) = "get " ++ s
+  show (Set s) = "set " ++ s
+  show (Arith op) = "arith ..."
+  show (Enter m) = "enter " ++ m
+  show (TryEnter m) = "tryenter " ++ m
+  show (Leave m) = "leave " ++ m
+  show (Spawn s p) = "spawn " ++ s
+  show (Assert s) = "assert " ++ s
 
 data Value = IntValue Int | BoolValue Bool | PidValue Pid deriving (Ord, Eq)
 
@@ -134,7 +146,7 @@ addEdge a b g@(StateGraph i2n n2i n2o) = StateGraph i2n'' n2i'' n2o'
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
           concat [show i ++ " [label = \"" ++ label i ++ "\"]\n" | i <- [1..n]] ++
-          concat [show i ++ " -> " ++ show j ++ "\n" | i <- [1..n], j <- sg_node2out g M.! i] ++
+          concat [show i ++ " -> " ++ show j ++ "\n" | i <- [1..n], i `M.member` sg_node2out g, j <- sg_node2out g M.! i] ++
           "}"
   where
     n = M.size (sg_index2node g)
@@ -155,10 +167,6 @@ stepState = do
 stepInsn :: (Pid, Insn) -> StepM ()
 stepInsn (pid, Label _ i) = do
   stepInsn (pid, i)
-stepInsn (pid, NewVar s v) = do
-  newVar s v
-stepInsn (pid, NewMon m) = do
-  newMon m
 stepInsn (pid, Jmp lab) = do
   stepJmp lab pid
 stepInsn (pid, JmpCond lab) = do
@@ -203,12 +211,14 @@ stepInsn (pid, Spawn name p) = do
   pid' <- stepSpawn name p
   stepPush (PidValue pid') pid
   stepNext pid
-stepAssert (pid, Assert s) = do
+stepInsn (pid, Assert s) = do
   b <- stepPop pid
   case b of
     BoolValue True -> stepNext pid
     BoolValue False -> fail $ "Assertion failed: "++s
     _ -> fail $ "Non-boolean in assert: "++show b
+stepInsn (pid, i) = do
+  error $ "Unknown insn: " ++ show i
 
 getState :: StepM ProgramState
 getState = StepM $ \st -> [(st,st)]
@@ -225,12 +235,6 @@ modifyProc f pid = modifyState $ \st -> st { st_procs = M.adjust (\(name,s) -> (
 nondet :: [StepM a] -> StepM a
 nondet ss = StepM $ \st -> concat [runStep s st | s <- ss]
 
-
-newVar :: String -> Value -> StepM ()
-newVar s v = modifyState $ \st -> st { st_vars = M.insert s v (st_vars st) }
-
-newMon :: String -> StepM ()
-newMon m = modifyState $ \st -> st { st_mons = M.insert m MonFree (st_mons st) }
 
 stepNext :: Pid -> StepM ()
 stepNext = modifyProc $ \(Running p ip s) -> 
