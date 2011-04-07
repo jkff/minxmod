@@ -20,9 +20,17 @@ data Insn =
   | Spawn String Prog
   | Assert String
 
-data Value = IntValue Int | BoolValue Bool | PidValue Pid deriving (Eq, Show)
+data Value = IntValue Int | BoolValue Bool | PidValue Pid deriving (Ord, Eq)
 
-data Pid = Pid Int deriving (Eq, Ord, Show)
+instance Show Value where
+  show (IntValue i) = show i
+  show (BoolValue b) = show b
+  show (PidValue p) = show p
+
+data Pid = Pid Int deriving (Eq, Ord)
+
+instance Show Pid where
+  show (Pid p) = show p
 
 data Prog = Prog 
   { 
@@ -37,7 +45,7 @@ data ProcState = Running
   }
   | Finished
 
-data MonState = MonFree | MonOccupied { mon_owner :: Pid, mon_depth :: Int {- , mon_waiters :: Queue Pid -} } deriving (Eq, Show)
+data MonState = MonFree | MonOccupied { mon_owner :: Pid, mon_depth :: Int {- , mon_waiters :: Queue Pid -} } deriving (Ord, Eq, Show)
 
 data ProgramState = ProgramState
   { 
@@ -49,12 +57,15 @@ data ProgramState = ProgramState
 instance Show ProgramState where
   show st = show (st_vars st, st_mons st, [(pid, name, case p of { Finished -> "<finished>" ; _ -> show (proc_ip p)}) | (pid,(name,p)) <- M.toList (st_procs st)])  
 
+stateSig s = (st_vars s, st_mons s, [(pid, sigP p) | (pid,(name,p)) <- M.toList (st_procs s)] )
+  where
+    sigP Finished = Nothing
+    sigP (Running _ ip stack) = Just (ip, stack)
+
 instance Eq ProgramState where
-  (==) a b = (sig a == sig b)
-    where 
-      sig s = (st_vars s, st_mons s, [(pid, sigP p) | (pid,(name,p)) <- M.toList (st_procs s)] )
-      sigP Finished = Nothing
-      sigP (Running _ ip stack) = Just (ip, stack)
+  (==) a b = (stateSig a == stateSig b)
+instance Ord ProgramState where
+  compare a b = compare (stateSig a) (stateSig b)
 
 initState :: [(String,Value)] -> [String] -> Prog -> ProgramState
 initState vars mons entryPoint = ProgramState {
@@ -77,6 +88,65 @@ instance Monad StepM where
 instance Functor StepM where
   f `fmap` s = s >>= return . f
 
+data StateGraph = StateGraph
+  { 
+    sg_index2node :: M.Map Int ProgramState,
+    sg_node2index :: M.Map ProgramState Int,
+    sg_node2out   :: M.Map Int [Int]
+  }
+  deriving (Show)
+
+
+type Queue a = ([a],[a])
+emptyQueue = ([],[])
+isEmptyQueue ([],[]) = True
+isEmptyQueue _ = False
+pushBack x (f,r) = (f, x:r)
+popFront ([],r) = popFront (reverse r,[])
+popFront (x:xs, r) = (x, (xs,r))
+
+stateGraph :: ProgramState -> Int -> StateGraph
+stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty)
+  where
+    buildGraph :: Queue (Int, ProgramState) -> StateGraph -> StateGraph
+    buildGraph frontier g
+      | isEmptyQueue frontier = g
+      | otherwise = buildGraph frontier' (foldr (addEdge node) g outs)
+      where
+        ((remDepth,node),rest) = popFront frontier
+        outs = if remDepth == 0 
+               then []
+               else map fst (runStep stepState node)
+        frontier' = foldr pushBack rest [(remDepth-1,out) | out <- outs, out `M.notMember` sg_node2index g]
+
+addEdge a b g@(StateGraph i2n n2i n2o) = StateGraph i2n'' n2i'' n2o'
+  where
+    (ia,i2n',n2i') 
+      | M.member a n2i = (n2i M.! a,    i2n,               n2i              )
+      | otherwise      = (1+M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
+    (ib,i2n'',n2i'') 
+      | M.member b n2i' = (n2i' M.! b,    i2n',               n2i'              )
+      | otherwise       = (1+M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
+    n2o' = M.alter addB ia n2o
+    addB Nothing = Just [ib]
+    addB (Just os) = if ib `elem` os then Just os else Just (ib:os)
+
+toDot :: StateGraph -> String
+toDot g = "digraph g {\n" ++ 
+          concat [show i ++ " [label = \"" ++ label i ++ "\"]\n" | i <- [1..n]] ++
+          concat [show i ++ " -> " ++ show j ++ "\n" | i <- [1..n], j <- sg_node2out g M.! i] ++
+          "}"
+  where
+    n = M.size (sg_index2node g)
+    label n = labelToDot (sg_index2node g M.! n)
+
+labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
+  "V: "++join [v ++ ":" ++ show val | (v,val) <- M.toList v]++"\\n"++
+  "M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth | (m, MonOccupied pid depth) <- M.toList m]++"\\n"++
+  "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk | (pid,(n,Running _ ip stk)) <- M.toList p ]
+  where
+    join = concat . intersperse ","
+
 stepState :: StepM ()
 stepState = do
   st <- getState
@@ -92,7 +162,7 @@ stepInsn (pid, NewMon m) = do
 stepInsn (pid, Jmp lab) = do
   stepJmp lab pid
 stepInsn (pid, JmpCond lab) = do
-  v <- top pid
+  v <- stepPop pid
   case v of
     BoolValue True -> stepJmp lab pid
     BoolValue False -> stepNext pid
@@ -102,7 +172,7 @@ stepInsn (pid, Get s) = do
   stepPush v pid
   stepNext pid
 stepInsn (pid, Set s) = do
-  v <- top pid
+  v <- stepPop pid
   setVar s v
   stepNext pid
 stepInsn (pid, Arith op) = do
@@ -125,14 +195,16 @@ stepInsn (pid, Leave m) = do
       fail ("Double leave "++m)
     MonOccupied p d -> do
       if p==pid 
-        then setMonState m (if d==1 then MonFree else MonOccupied p (d-1))
+        then do
+          setMonState m (if d==1 then MonFree else MonOccupied p (d-1))
+          stepNext pid
         else fail "Mon left by non-owner"
 stepInsn (pid, Spawn name p) = do
   pid' <- stepSpawn name p
   stepPush (PidValue pid') pid
   stepNext pid
 stepAssert (pid, Assert s) = do
-  b <- top pid
+  b <- stepPop pid
   case b of
     BoolValue True -> stepNext pid
     BoolValue False -> fail $ "Assertion failed: "++s
@@ -184,8 +256,11 @@ getStack pid = (proc_stack . snd . (M.! pid) . st_procs) `fmap` getState
 setStack :: [Value] -> Pid -> StepM ()
 setStack s' = modifyProc $ \(Running p ip s) -> Running p ip s'
 
-top :: Pid -> StepM Value
-top pid = head `fmap` getStack pid
+stepPop :: Pid -> StepM Value
+stepPop pid = do
+  (h:t) <- getStack pid
+  setStack t pid
+  return h
 
 getMonState :: String -> StepM MonState
 getMonState mon = ((M.! mon) . st_mons) `fmap` getState
