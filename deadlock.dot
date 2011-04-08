@@ -12,65 +12,102 @@ digraph g {
 11 [label = "V: \nM: a:2/1,b:2/1\nP: 1=ta:0[],2=tb:2[]"]
 12 [label = "V: \nM: \nP: 0=entry:1[1],1=ta:4[]"]
 13 [label = "V: \nM: a:1/1\nP: 1=ta:3[],2=tb:0[]"]
-14 [label = "V: \nM: b:2/1\nP: 1=ta:0[],2=tb:3[]"]
-15 [label = "V: \nM: \nP: 1=ta:4[],2=tb:0[]"]
-16 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:3[],2=tb:1[]"]
-17 [label = "V: \nM: \nP: 1=ta:0[],2=tb:4[]"]
-18 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[],2=tb:3[]"]
-19 [label = "V: \nM: b:2/1\nP: 1=ta:4[],2=tb:1[]"]
-20 [label = "V: \nM: a:1/1\nP: 1=ta:1[],2=tb:4[]"]
-21 [label = "V: \nM: a:2/1,b:2/1\nP: 1=ta:4[],2=tb:2[]"]
-22 [label = "V: \nM: a:1/1,b:1/1\nP: 1=ta:2[],2=tb:4[]"]
-23 [label = "V: \nM: b:2/1\nP: 1=ta:4[],2=tb:3[]"]
-24 [label = "V: \nM: a:1/1\nP: 1=ta:3[],2=tb:4[]"]
-25 [label = "V: \nM: \nP: 1=ta:4[],2=tb:4[]"]
-1 -> 2
-2 -> 4
-2 -> 3
-3 -> 6
-3 -> 5
-4 -> 6
-4 -> 7
-5 -> 9
-5 -> 8
-6 -> 9
-6 -> 10
-7 -> 10
-7 -> 11
-8 -> 13
-8 -> 12
-9 -> 13
-9 -> 9
-10 -> 10
-11 -> 11
-11 -> 14
-12 -> 15
-12 -> 2
-13 -> 15
-13 -> 16
-14 -> 18
-14 -> 17
-15 -> 4
-15 -> 19
-16 -> 19
-16 -> 16
-17 -> 20
-17 -> 4
-18 -> 18
-18 -> 20
-19 -> 7
-19 -> 21
-20 -> 22
-20 -> 6
-21 -> 11
-21 -> 23
-22 -> 24
-22 -> 9
-23 -> 14
-23 -> 25
-24 -> 25
-24 -> 13
-25 -> 17
-25 -> 15
+14 [label = "V: \nM: a:1/1,b:1/1\nP: 1=ta:2[],2=tb:0[]?b"]
+15 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[],2=tb:1[]?a"]
+16 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[]?b,2=tb:1[]"]
+17 [label = "V: \nM: b:2/1\nP: 1=ta:0[],2=tb:3[]"]
+18 [label = "V: \nM: a:2/1,b:2/1\nP: 1=ta:0[]?a,2=tb:2[]"]
+19 [label = "V: \nM: \nP: 1=ta:4[],2=tb:0[]"]
+20 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:3[],2=tb:1[]"]
+21 [label = "V: \nM: a:1/1\nP: 1=ta:3[],2=tb:0[]?b"]
+22 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[]?b,2=tb:1[]?a"]
+23 [label = "V: \nM: \nP: 1=ta:0[],2=tb:4[]"]
+24 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[],2=tb:3[]"]
+25 [label = "V: \nM: b:2/1\nP: 1=ta:0[]?a,2=tb:3[]"]
+26 [label = "V: \nM: b:2/1\nP: 1=ta:4[],2=tb:1[]"]
+27 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:3[],2=tb:1[]?a"]
+28 [label = "V: \nM: \nP: 1=ta:4[],2=tb:0[]?b"]
+29 [label = "V: \nM: a:1/1\nP: 1=ta:1[],2=tb:4[]"]
+30 [label = "V: \nM: a:1/1,b:2/1\nP: 1=ta:1[]?b,2=tb:3[]"]
+31 [label = "V: \nM: \nP: 1=ta:0[]?a,2=tb:4[]"]
+32 [label = "V: \nM: a:2/1,b:2/1\nP: 1=ta:4[],2=tb:2[]"]
+33 [label = "V: \nM: b:2/1\nP: 1=ta:4[],2=tb:1[]?a"]
+34 [label = "V: \nM: \nP: 1=ta:0[],2=tb:0[]?b"]
+35 [label = "V: \nM: a:1/1,b:1/1\nP: 1=ta:2[],2=tb:4[]"]
+36 [label = "V: \nM: a:1/1\nP: 1=ta:1[]?b,2=tb:4[]"]
+37 [label = "V: \nM: \nP: 1=ta:0[]?a,2=tb:0[]"]
+38 [label = "V: \nM: b:2/1\nP: 1=ta:4[],2=tb:3[]"]
+39 [label = "V: \nM: b:2/1\nP: 1=ta:0[],2=tb:1[]?a"]
+40 [label = "V: \nM: a:1/1\nP: 1=ta:1[],2=tb:0[]?b"]
+41 [label = "V: \nM: a:1/1\nP: 1=ta:3[],2=tb:4[]"]
+42 [label = "V: \nM: a:1/1\nP: 1=ta:1[]?b,2=tb:0[]"]
+43 [label = "V: \nM: b:2/1\nP: 1=ta:0[]?a,2=tb:1[]"]
+44 [label = "V: \nM: \nP: 1=ta:4[],2=tb:4[]"]
+1 -> 2 [style=bold, color=red, weight=10]
+2 -> 4 [style=bold, color=red, weight=10]
+2 -> 3 [style=bold, color=red, weight=10]
+3 -> 6 [style=bold, color=red, weight=10]
+3 -> 5 [style=bold, color=red, weight=10]
+4 -> 6 [constraint=false]
+4 -> 7 [style=bold, color=red, weight=10]
+5 -> 9 [style=bold, color=red, weight=10]
+5 -> 8 [style=bold, color=red, weight=10]
+6 -> 9 [constraint=false]
+6 -> 10 [style=bold, color=red, weight=10]
+7 -> 10 [constraint=false]
+7 -> 11 [style=bold, color=red, weight=10]
+8 -> 13 [style=bold, color=red, weight=10]
+8 -> 12 [style=bold, color=red, weight=10]
+9 -> 13 [constraint=false]
+9 -> 14 [style=bold, color=red, weight=10]
+10 -> 16 [style=bold, color=red, weight=10]
+10 -> 15 [style=bold, color=red, weight=10]
+11 -> 18 [style=bold, color=red, weight=10]
+11 -> 17 [style=bold, color=red, weight=10]
+12 -> 19 [style=bold, color=red, weight=10]
+12 -> 2 [constraint=false]
+13 -> 19 [constraint=false]
+13 -> 20 [style=bold, color=red, weight=10]
+14 -> 21 [style=bold, color=red, weight=10]
+15 -> 22 [style=bold, color=red, weight=10]
+16 -> 22 [constraint=false]
+17 -> 24 [style=bold, color=red, weight=10]
+17 -> 23 [style=bold, color=red, weight=10]
+18 -> 25 [style=bold, color=red, weight=10]
+19 -> 4 [constraint=false]
+19 -> 26 [style=bold, color=red, weight=10]
+20 -> 26 [constraint=false]
+20 -> 27 [style=bold, color=red, weight=10]
+21 -> 28 [style=bold, color=red, weight=10]
+23 -> 29 [style=bold, color=red, weight=10]
+23 -> 4 [constraint=false]
+24 -> 30 [style=bold, color=red, weight=10]
+24 -> 29 [constraint=false]
+25 -> 31 [style=bold, color=red, weight=10]
+26 -> 7 [constraint=false]
+26 -> 32 [style=bold, color=red, weight=10]
+27 -> 33 [style=bold, color=red, weight=10]
+28 -> 34 [style=bold, color=red, weight=10]
+29 -> 35 [style=bold, color=red, weight=10]
+29 -> 6 [constraint=false]
+30 -> 36 [style=bold, color=red, weight=10]
+31 -> 37 [style=bold, color=red, weight=10]
+32 -> 11 [constraint=false]
+32 -> 38 [style=bold, color=red, weight=10]
+33 -> 39 [style=bold, color=red, weight=10]
+34 -> 40 [style=bold, color=red, weight=10]
+35 -> 41 [style=bold, color=red, weight=10]
+35 -> 9 [constraint=false]
+36 -> 42 [style=bold, color=red, weight=10]
+37 -> 43 [style=bold, color=red, weight=10]
+38 -> 17 [constraint=false]
+38 -> 44 [style=bold, color=red, weight=10]
+39 -> 15 [constraint=false]
+40 -> 14 [constraint=false]
+41 -> 44 [constraint=false]
+41 -> 13 [constraint=false]
+42 -> 16 [constraint=false]
+43 -> 18 [constraint=false]
+44 -> 23 [constraint=false]
+44 -> 19 [constraint=false]
 }
-

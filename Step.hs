@@ -53,7 +53,8 @@ data ProcState = Running
   { 
     proc_prog :: Prog,
     proc_ip :: Int,
-    proc_stack :: [Value]
+    proc_stack :: [Value],
+    proc_waitedMon :: Maybe String
   }
   | Finished
 
@@ -67,12 +68,16 @@ data ProgramState = ProgramState
   }
 
 instance Show ProgramState where
-  show st = show (st_vars st, st_mons st, [(pid, name, case p of { Finished -> "<finished>" ; _ -> show (proc_ip p)}) | (pid,(name,p)) <- M.toList (st_procs st)])  
+  show st = show (st_vars st, st_mons st, [(pid, name, showProc p) | (pid,(name,p)) <- M.toList (st_procs st)]) 
+    where
+      showProc Finished = "<finished>"
+      showProc r@Running{proc_waitedMon=Nothing, proc_ip=ip} = show ip
+      showProc r@Running{proc_waitedMon=Just m,  proc_ip=ip} = show ip ++ "?" ++ m
 
 stateSig s = (st_vars s, st_mons s, [(pid, sigP p) | (pid,(name,p)) <- M.toList (st_procs s)] )
   where
     sigP Finished = Nothing
-    sigP (Running _ ip stack) = Just (ip, stack)
+    sigP r@Running{} = Just (proc_ip r, proc_stack r, proc_waitedMon r)
 
 instance Eq ProgramState where
   (==) a b = (stateSig a == stateSig b)
@@ -81,7 +86,7 @@ instance Ord ProgramState where
 
 initState :: [(String,Value)] -> [String] -> Prog -> ProgramState
 initState vars mons entryPoint = ProgramState {
-    st_procs = M.fromList [(Pid 0, ("entry", Running entryPoint 0 []))],
+    st_procs = M.fromList [(Pid 0, ("entry", Running {proc_prog = entryPoint, proc_ip = 0, proc_stack = [], proc_waitedMon = Nothing}))],
     st_vars  = M.fromList vars,
     st_mons  = M.fromList [(m, MonFree) | m <- mons]
   }
@@ -104,7 +109,8 @@ data StateGraph = StateGraph
   { 
     sg_index2node :: M.Map Int ProgramState,
     sg_node2index :: M.Map ProgramState Int,
-    sg_node2out   :: M.Map Int [Int]
+    sg_node2out   :: M.Map Int [Int],
+    sg_node2prev  :: M.Map Int Int
   }
   deriving (Show)
 
@@ -118,7 +124,7 @@ popFront ([],r) = popFront (reverse r,[])
 popFront (x:xs, r) = (x, (xs,r))
 
 stateGraph :: ProgramState -> Int -> StateGraph
-stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty)
+stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty M.empty)
   where
     buildGraph :: Queue (Int, ProgramState) -> StateGraph -> StateGraph
     buildGraph frontier g
@@ -131,7 +137,7 @@ stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empt
                else map fst (runStep stepState node)
         frontier' = foldr pushBack rest [(remDepth-1,out) | out <- outs, out `M.notMember` sg_node2index g]
 
-addEdge a b g@(StateGraph i2n n2i n2o) = StateGraph i2n'' n2i'' n2o'
+addEdge a b g@(StateGraph i2n n2i n2o n2p) = StateGraph i2n'' n2i'' n2o' n2p'
   where
     (ia,i2n',n2i') 
       | M.member a n2i = (n2i M.! a,    i2n,               n2i              )
@@ -142,27 +148,42 @@ addEdge a b g@(StateGraph i2n n2i n2o) = StateGraph i2n'' n2i'' n2o'
     n2o' = M.alter addB ia n2o
     addB Nothing = Just [ib]
     addB (Just os) = if ib `elem` os then Just os else Just (ib:os)
+    n2p' = if M.member ib n2p then n2p else M.insert ib ia n2p
 
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
           concat [show i ++ " [label = \"" ++ label i ++ "\"]\n" | i <- [1..n]] ++
-          concat [show i ++ " -> " ++ show j ++ "\n" | i <- [1..n], i `M.member` sg_node2out g, j <- sg_node2out g M.! i] ++
+          concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
+                 | i <- [1..n], i `M.member` sg_node2out g, 
+                   j <- sg_node2out g M.! i,
+                   let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
+                              then " [style=bold, color=red, weight=10]"
+                              else " [constraint=false]"] ++
           "}"
   where
     n = M.size (sg_index2node g)
     label n = labelToDot (sg_index2node g M.! n)
 
 labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
-  "V: "++join [v ++ ":" ++ show val | (v,val) <- M.toList v]++"\\n"++
-  "M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth | (m, MonOccupied pid depth) <- M.toList m]++"\\n"++
-  "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk | (pid,(n,Running _ ip stk)) <- M.toList p ]
+  "V: "++join [v ++ ":" ++ show val 
+              | (v,val) <- M.toList v]++"\\n"++
+  "M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth 
+              | (m, MonOccupied pid depth) <- M.toList m]++"\\n"++
+  "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk ++ 
+                 maybe "" ("?"++) wm
+              | (pid,(n,Running {proc_ip=ip, proc_stack=stk, proc_waitedMon=wm})) <- M.toList p ]
   where
     join = concat . intersperse ","
 
 stepState :: StepM ()
 stepState = do
   st <- getState
-  nondet [stepInsn (pid, prog_insns p !! ip) | (pid, (_,Running p ip _)) <- M.toList (st_procs st)]
+  -- TODO: "Not runnable" != "runnable but next state is the same".
+  let isRunnable pid Finished = False;
+      isRunnable pid Running{ proc_waitedMon = Nothing } = True;
+      isRunnable pid Running{ proc_waitedMon = Just m  } = case getMonState m st of MonFree -> True; _ -> False
+  let runnableProcs = [x | x@(pid, (_,pst)) <- M.toList (st_procs st), isRunnable pid pst]
+  nondet [stepInsn (pid, prog_insns p !! ip) | (pid, (_,Running p ip _ Nothing)) <- runnableProcs]
 
 stepInsn :: (Pid, Insn) -> StepM ()
 stepInsn (pid, Label _ i) = do
@@ -190,14 +211,17 @@ stepInsn (pid, Arith op) = do
 stepInsn (pid, Enter m) = do
   b <- tryEnterMon pid m
   if b
-    then stepNext pid
-    else return ()
+    then do
+      clearWaitedMon m pid
+      stepNext pid
+    else do
+      setWaitedMon m pid
 stepInsn (pid, TryEnter m) = do
   f <- tryEnterMon pid m
   stepPush (BoolValue f) pid
   stepNext pid
 stepInsn (pid, Leave m) = do
-  s <- getMonState m
+  s <- getMonStateM m
   case s of
     MonFree -> do
       fail ("Double leave "++m)
@@ -237,16 +261,19 @@ nondet ss = StepM $ \st -> concat [runStep s st | s <- ss]
 
 
 stepNext :: Pid -> StepM ()
-stepNext = modifyProc $ \(Running p ip s) -> 
-  if ip < length (prog_insns p) - 1 then Running p (ip + 1) s else Finished
+stepNext = modifyProc $ \r@Running {proc_prog=p, proc_ip=ip, proc_waitedMon=Nothing} -> 
+  if ip < length (prog_insns p) - 1 then r{proc_ip=ip+1} else Finished
 
 stepJmp :: String -> Pid -> StepM ()
 stepJmp lab = modifyProc f
   where
-    f (Running p ip s) = Running p ip' s where (Just ip') = findIndex (\insn -> case insn of {Label n _ -> n == lab ; _ -> False}) (prog_insns p)
+    f r@Running{proc_waitedMon=Nothing} = r{ proc_ip = ip' }
+      where 
+        p = proc_prog r
+        (Just ip') = findIndex (\insn -> case insn of {Label n _ -> n == lab ; _ -> False}) (prog_insns p)
 
 stepPush :: Value -> Pid -> StepM ()
-stepPush v = modifyProc $ \(Running p ip s) -> Running p ip (v:s)
+stepPush v = modifyProc $ \r@Running{proc_stack=s} -> r{proc_stack=v:s}
 
 getVar :: String -> StepM Value 
 getVar s = ((M.! s) . st_vars) `fmap` getState
@@ -258,7 +285,7 @@ getStack :: Pid -> StepM [Value]
 getStack pid = (proc_stack . snd . (M.! pid) . st_procs) `fmap` getState
 
 setStack :: [Value] -> Pid -> StepM ()
-setStack s' = modifyProc $ \(Running p ip s) -> Running p ip s'
+setStack s' = modifyProc $ \r -> r{proc_stack=s'}
 
 stepPop :: Pid -> StepM Value
 stepPop pid = do
@@ -266,8 +293,11 @@ stepPop pid = do
   setStack t pid
   return h
 
-getMonState :: String -> StepM MonState
-getMonState mon = ((M.! mon) . st_mons) `fmap` getState
+getMonState :: String -> ProgramState -> MonState
+getMonState mon = ((M.! mon) . st_mons)
+
+getMonStateM :: String -> StepM MonState
+getMonStateM mon = getMonState mon `fmap` getState
 
 setMonState :: String -> MonState -> StepM ()
 setMonState mon s = do
@@ -276,7 +306,7 @@ setMonState mon s = do
 
 tryEnterMon :: Pid -> String -> StepM Bool
 tryEnterMon pid mon = do
-  s <- getMonState mon
+  s <- getMonStateM mon
   case s of
     MonFree -> do
       setMonState mon (MonOccupied { mon_owner = pid, mon_depth = 1 })
@@ -289,9 +319,15 @@ tryEnterMon pid mon = do
         else do
           return False
 
+setWaitedMon :: String -> Pid -> StepM ()
+setWaitedMon mon = modifyProc $ \p -> p{proc_waitedMon = Just mon}
+
+clearWaitedMon :: String -> Pid -> StepM ()
+clearWaitedMon mon = modifyProc $ \p -> p{proc_waitedMon = Nothing}
+
 stepSpawn :: String -> Prog -> StepM Pid
 stepSpawn name prog = do
-  let ps = Running prog 0 []
+  let ps = Running {proc_prog=prog, proc_ip=0, proc_stack=[], proc_waitedMon=Nothing}
   st <- getState
   let pid' = Pid (1 + maximum [i | Pid i <- M.keys (st_procs st)])
   setState $ st { st_procs = M.insert pid' (name, ps) (st_procs st) }
