@@ -110,7 +110,8 @@ data StateGraph = StateGraph
     sg_index2node :: M.Map Int ProgramState,
     sg_node2index :: M.Map ProgramState Int,
     sg_node2out   :: M.Map Int [Int],
-    sg_node2prev  :: M.Map Int Int
+    sg_node2prev  :: M.Map Int Int,
+    sg_node2open  :: M.Map Int Bool
   }
   deriving (Show)
 
@@ -122,22 +123,24 @@ isEmptyQueue _ = False
 pushBack x (f,r) = (f, x:r)
 popFront ([],r) = popFront (reverse r,[])
 popFront (x:xs, r) = (x, (xs,r))
+queueToList (f,r) = f++r
 
 stateGraph :: ProgramState -> Int -> StateGraph
-stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty M.empty)
+stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
   where
     buildGraph :: Queue (Int, ProgramState) -> StateGraph -> StateGraph
     buildGraph frontier g
       | isEmptyQueue frontier = g
-      | otherwise = buildGraph frontier' (foldr (addEdge node) g outs)
+      | otherwise = buildGraph frontier' g''
       where
+        g' = foldr (addEdge node) g outs
+        g'' = g' { sg_node2open = M.fromList [(sg_node2index g' M.! n,True) | n <- map snd (queueToList rest)] }
         ((remDepth,node),rest) = popFront frontier
-        outs = if remDepth == 0 
-               then []
-               else map fst (runStep stepState node)
-        frontier' = foldr pushBack rest [(remDepth-1,out) | out <- outs, out `M.notMember` sg_node2index g]
+        outs = map fst (runStep stepState node)
+        newOuts = filter (`M.notMember` sg_node2index g) outs
+        frontier' = foldr pushBack rest [(remDepth-1, out) | out <- newOuts, remDepth > 0]
 
-addEdge a b g@(StateGraph i2n n2i n2o n2p) = StateGraph i2n'' n2i'' n2o' n2p'
+addEdge a b g@(StateGraph i2n n2i n2o n2p n2open) = StateGraph i2n'' n2i'' n2o' n2p' n2open
   where
     (ia,i2n',n2i') 
       | M.member a n2i = (n2i M.! a,    i2n,               n2i              )
@@ -152,7 +155,11 @@ addEdge a b g@(StateGraph i2n n2i n2o n2p) = StateGraph i2n'' n2i'' n2o' n2p'
 
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
-          concat [show i ++ " [label = \"" ++ label i ++ "\"]\n" | i <- [1..n]] ++
+          concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
+                 | i <- [1..n],
+                   let style = if M.findWithDefault False i (sg_node2open g)
+                               then ", style=dashed"
+                               else ""] ++
           concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
                  | i <- [1..n], i `M.member` sg_node2out g, 
                    j <- sg_node2out g M.! i,
