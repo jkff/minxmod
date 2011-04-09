@@ -1,6 +1,7 @@
 module Main where
 
-import Step
+import Types
+import ToDot
 
 nop = Arith $ \s -> [s]
 pushI i = Arith $ \s -> [IntValue i:s]

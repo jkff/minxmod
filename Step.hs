@@ -1,102 +1,10 @@
 module Step where
 
+import Types
+
 import Data.List
 import Control.Monad
 import qualified Data.Map as M
-
-import Debug.Trace
-
-data Insn =
-    Label String Insn
-  | Block [Insn]
-  | Jmp String
-  | JmpCond String
-  | Get String
-  | Set String
-  | Arith ([Value] -> [[Value]])
-  | Enter String
-  | TryEnter String
-  | Leave String
-  | Spawn String Prog
-  | Assert String
-
-instance Show Insn where
-  show (Label s i) = s ++ ": " ++ show i
-  show (Block is) = "block [" ++ show is ++ "]"
-  show (Jmp s) = "jmp " ++ s
-  show (JmpCond s) = "jmpcond " ++ s 
-  show (Get s) = "get " ++ s
-  show (Set s) = "set " ++ s
-  show (Arith op) = "arith ..."
-  show (Enter m) = "enter " ++ m
-  show (TryEnter m) = "tryenter " ++ m
-  show (Leave m) = "leave " ++ m
-  show (Spawn s p) = "spawn " ++ s
-  show (Assert s) = "assert " ++ s
-
-data Value = IntValue Int | BoolValue Bool | PidValue Pid deriving (Ord, Eq)
-
-instance Show Value where
-  show (IntValue i) = show i
-  show (BoolValue b) = show b
-  show (PidValue p) = show p
-
-data Pid = Pid Int deriving (Eq, Ord)
-
-instance Show Pid where
-  show (Pid p) = show p
-
-data Prog = Prog 
-  { 
-    prog_insns :: [Insn] 
-  }
-
-data ProcState = Running
-  { 
-    proc_prog :: Prog,
-    proc_ip :: Int,
-    proc_stack :: [Value],
-    proc_waitedMon :: Maybe String
-  }
-  | Finished
-
-data MonState = MonFree | MonOccupied { mon_owner :: Pid, mon_depth :: Int {- , mon_waiters :: Queue Pid -} } deriving (Ord, Eq, Show)
-
-data ProgramState = ProgramState
-  { 
-    st_procs :: M.Map Pid (String, ProcState),
-    st_vars :: M.Map String Value,
-    st_mons :: M.Map String MonState
-  }
-
-instance Show ProgramState where
-  show st = show (st_vars st, st_mons st, [(pid, name, showProc p) | (pid,(name,p)) <- M.toList (st_procs st)]) 
-    where
-      showProc Finished = "<finished>"
-      showProc r@Running{proc_waitedMon=Nothing, proc_ip=ip} = show ip
-      showProc r@Running{proc_waitedMon=Just m,  proc_ip=ip} = show ip ++ "?" ++ m
-
-stateSig s = (st_vars s, st_mons s, [(pid, sigP p) | (pid,(name,p)) <- M.toList (st_procs s)] )
-  where
-    sigP Finished = Nothing
-    sigP r@Running{} = Just (proc_ip r, proc_stack r, proc_waitedMon r)
-
-instance Eq ProgramState where
-  (==) a b = (stateSig a == stateSig b)
-instance Ord ProgramState where
-  compare a b = compare (stateSig a) (stateSig b)
-
-initState :: [(String,Value)] -> [String] -> Prog -> ProgramState
-initState vars mons entryPoint = ProgramState {
-    st_procs = M.fromList [(Pid 0, ("entry", Running {proc_prog = entryPoint, proc_ip = 0, proc_stack = [], proc_waitedMon = Nothing}))],
-    st_vars  = M.fromList vars,
-    st_mons  = M.fromList [(m, MonFree) | m <- mons]
-  }
-
-compile :: [Insn] -> Prog
-compile is = Prog {prog_insns = expandBlocks is}
-  where
-    expandBlocks = concatMap (\i -> case i of { Block is -> expandBlocks is ; j -> [j] })
 
 newtype StepM a = StepM { runStep :: ProgramState -> [(ProgramState, a)] }
 instance Monad StepM where
@@ -106,85 +14,6 @@ instance Monad StepM where
 
 instance Functor StepM where
   f `fmap` s = s >>= return . f
-
-data StateGraph = StateGraph
-  { 
-    sg_index2node :: M.Map Int ProgramState,
-    sg_node2index :: M.Map ProgramState Int,
-    sg_node2out   :: M.Map Int [Int],
-    sg_node2prev  :: M.Map Int Int,
-    sg_node2open  :: M.Map Int Bool
-  }
-  deriving (Show)
-
-
-type Queue a = ([a],[a])
-emptyQueue = ([],[])
-isEmptyQueue ([],[]) = True
-isEmptyQueue _ = False
-pushBack x (f,r) = (f, x:r)
-popFront ([],r) = popFront (reverse r,[])
-popFront (x:xs, r) = (x, (xs,r))
-queueToList (f,r) = f++reverse r
-
-stateGraph :: ProgramState -> Int -> StateGraph
-stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
-  where
-    buildGraph :: Queue (Int, ProgramState) -> StateGraph -> StateGraph
-    buildGraph frontier g
-      | isEmptyQueue frontier = g
-      | otherwise = buildGraph frontier' g''
-      where
-        g' = foldr (addEdge node) g outs
-        opennessUpdate = map (\(n,b) -> (sg_node2index g' M.! n, b)) $ 
-                         (node,False):[(no,True) | no <- newOuts]
-        g'' = g' { sg_node2open = foldr (uncurry M.insert) (sg_node2open g') opennessUpdate }
-        ((remDepth,node),rest) = popFront frontier
-        outs = map fst (runStep stepState node)
-        newOuts = filter (`M.notMember` sg_node2index g) outs
-        frontier' = foldr pushBack rest [(remDepth-1, out) | out <- newOuts, remDepth > 0]
-
-addEdge a b g@(StateGraph i2n n2i n2o n2p n2open) = StateGraph i2n'' n2i'' n2o' n2p' n2open
-  where
-    (ia,i2n',n2i') 
-      | M.member a n2i = (n2i M.! a,  i2n,               n2i              )
-      | otherwise      = (M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
-    (ib,i2n'',n2i'') 
-      | M.member b n2i' = (n2i' M.! b,  i2n',               n2i'              )
-      | otherwise       = (M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
-    n2o' = M.alter addB ia n2o
-    addB Nothing = Just [ib]
-    addB (Just os) = if ib `elem` os then Just os else Just (ib:os)
-    n2p' = if M.member ib n2p then n2p else M.insert ib ia n2p
-
-toDot :: StateGraph -> String
-toDot g = "digraph g {\n" ++ 
-          concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
-                 | i <- [0..n-1],
-                   let style = if M.findWithDefault False i (sg_node2open g)
-                               then ", style=dashed"
-                               else ""] ++
-          concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
-                 | i <- [0..n-1], i `M.member` sg_node2out g, 
-                   j <- sg_node2out g M.! i,
-                   let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
-                              then " [style=bold, color=red, weight=10]"
-                              else " [constraint=false]"] ++
-          "}"
-  where
-    n = M.size (sg_index2node g)
-    label n = labelToDot (sg_index2node g M.! n)
-
-labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
-  "V: "++join [v ++ ":" ++ show val 
-              | (v,val) <- M.toList v]++"\\n"++
-  "M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth 
-              | (m, MonOccupied pid depth) <- M.toList m]++"\\n"++
-  "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk ++ 
-                 maybe "" ("?"++) wm
-              | (pid,(n,Running {proc_ip=ip, proc_stack=stk, proc_waitedMon=wm})) <- M.toList p ]
-  where
-    join = concat . intersperse ","
 
 stepState :: StepM ()
 stepState = do
@@ -252,8 +81,6 @@ stepInsn (pid, Assert s) = do
     BoolValue True -> stepNext pid
     BoolValue False -> fail $ "Assertion failed: "++s
     _ -> fail $ "Non-boolean in assert: "++show b
-stepInsn (pid, i) = do
-  error $ "Unknown insn: " ++ show i
 
 getState :: StepM ProgramState
 getState = StepM $ \st -> [(st,st)]
