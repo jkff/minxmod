@@ -4,6 +4,8 @@ import Data.List
 import Control.Monad
 import qualified Data.Map as M
 
+import Debug.Trace
+
 data Insn =
     Label String Insn
   | Block [Insn]
@@ -123,7 +125,7 @@ isEmptyQueue _ = False
 pushBack x (f,r) = (f, x:r)
 popFront ([],r) = popFront (reverse r,[])
 popFront (x:xs, r) = (x, (xs,r))
-queueToList (f,r) = f++r
+queueToList (f,r) = f++reverse r
 
 stateGraph :: ProgramState -> Int -> StateGraph
 stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
@@ -134,7 +136,9 @@ stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empt
       | otherwise = buildGraph frontier' g''
       where
         g' = foldr (addEdge node) g outs
-        g'' = g' { sg_node2open = M.fromList [(sg_node2index g' M.! n,True) | n <- map snd (queueToList rest)] }
+        opennessUpdate = map (\(n,b) -> (sg_node2index g' M.! n, b)) $ 
+                         (node,False):[(no,True) | no <- newOuts]
+        g'' = g' { sg_node2open = foldr (uncurry M.insert) (sg_node2open g') opennessUpdate }
         ((remDepth,node),rest) = popFront frontier
         outs = map fst (runStep stepState node)
         newOuts = filter (`M.notMember` sg_node2index g) outs
@@ -143,11 +147,11 @@ stateGraph init n = buildGraph (pushBack (n,init) emptyQueue) (StateGraph M.empt
 addEdge a b g@(StateGraph i2n n2i n2o n2p n2open) = StateGraph i2n'' n2i'' n2o' n2p' n2open
   where
     (ia,i2n',n2i') 
-      | M.member a n2i = (n2i M.! a,    i2n,               n2i              )
-      | otherwise      = (1+M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
+      | M.member a n2i = (n2i M.! a,  i2n,               n2i              )
+      | otherwise      = (M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
     (ib,i2n'',n2i'') 
-      | M.member b n2i' = (n2i' M.! b,    i2n',               n2i'              )
-      | otherwise       = (1+M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
+      | M.member b n2i' = (n2i' M.! b,  i2n',               n2i'              )
+      | otherwise       = (M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
     n2o' = M.alter addB ia n2o
     addB Nothing = Just [ib]
     addB (Just os) = if ib `elem` os then Just os else Just (ib:os)
@@ -156,12 +160,12 @@ addEdge a b g@(StateGraph i2n n2i n2o n2p n2open) = StateGraph i2n'' n2i'' n2o' 
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
           concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
-                 | i <- [1..n],
+                 | i <- [0..n-1],
                    let style = if M.findWithDefault False i (sg_node2open g)
                                then ", style=dashed"
                                else ""] ++
           concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
-                 | i <- [1..n], i `M.member` sg_node2out g, 
+                 | i <- [0..n-1], i `M.member` sg_node2out g, 
                    j <- sg_node2out g M.! i,
                    let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
                               then " [style=bold, color=red, weight=10]"
