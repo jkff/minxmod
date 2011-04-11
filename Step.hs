@@ -23,7 +23,7 @@ stepState = do
       isRunnable pid Running{ proc_waitedMon = Nothing } = True;
       isRunnable pid Running{ proc_waitedMon = Just m  } = case getMonState m st of MonFree -> True; _ -> False
   let runnableProcs = [x | x@(pid, (_,pst)) <- M.toList (st_procs st), isRunnable pid pst]
-  nondet [stepInsn (pid, prog_insns p !! ip) | (pid, (_,Running p ip _ Nothing)) <- runnableProcs]
+  nondet [stepInsn (pid, prog_insns p !! ip) | (pid, (_,Running p ip _ _)) <- runnableProcs]
 
 stepInsn :: (Pid, Insn) -> StepM ()
 stepInsn (pid, Label _ i) = do
