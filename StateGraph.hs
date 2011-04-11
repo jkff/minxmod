@@ -4,6 +4,7 @@ import Types
 import Step
 
 import qualified Data.Map as M
+import Data.List
 import qualified Data.Sequence as S
 
 data StateGraph = StateGraph
@@ -17,8 +18,13 @@ data StateGraph = StateGraph
   deriving (Show)
 
 stateGraph :: ProgramState -> Int -> StateGraph
-stateGraph init n = buildGraph (S.singleton (n, init)) (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
+stateGraph init n = addEmptyEdgeLists $ 
+                    buildGraph (S.singleton (n, init)) 
+                    (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
   where
+    addEmptyEdgeLists g = g {sg_node2out = foldl' (\g i -> M.insertWith (\_ old -> old) i [] g) (sg_node2out g) 
+                                                  (M.keys (sg_index2node g))}
+
     buildGraph :: S.Seq (Int, ProgramState) -> StateGraph -> StateGraph
     buildGraph frontier g | S.null frontier = g
                           | otherwise       = buildGraph frontier' g''
