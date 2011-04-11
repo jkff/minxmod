@@ -11,44 +11,47 @@ data StateGraph = StateGraph
   { 
     sg_index2node :: M.Map Int ProgramState,
     sg_node2index :: M.Map ProgramState Int,
-    sg_node2out   :: M.Map Int [Int],
-    sg_node2prev  :: M.Map Int Int,
-    sg_node2open  :: M.Map Int Bool
+    sg_node2out   :: M.Map Int (Maybe [Int]),
+    sg_node2prev  :: M.Map Int Int
   }
   deriving (Show)
 
 stateGraph :: ProgramState -> Int -> StateGraph
 stateGraph init n = addEmptyEdgeLists $ 
                     buildGraph (S.singleton (n, init)) 
-                    (StateGraph M.empty M.empty M.empty M.empty (M.fromList [(0,True)]))
+                    (StateGraph M.empty M.empty M.empty M.empty)
   where
-    addEmptyEdgeLists g = g {sg_node2out = foldl' (\g i -> M.insertWith (\_ old -> old) i [] g) (sg_node2out g) 
+    addEmptyEdgeLists g = g {sg_node2out = foldl' (\g i -> M.insertWith (\_ old -> old) i (Just []) g) (sg_node2out g) 
                                                   (M.keys (sg_index2node g))}
 
     buildGraph :: S.Seq (Int, ProgramState) -> StateGraph -> StateGraph
     buildGraph frontier g | S.null frontier = g
-                          | otherwise       = buildGraph frontier' g''
+                          | otherwise       = buildGraph frontier'  $ g''
       where
         g' = foldr (addEdge node) g outs
-        opennessUpdate = map (\(n,b) -> (sg_node2index g' M.! n, b)) $ 
-                         (node,False):[(no,True) | no <- newOuts]
-        g'' = g' { sg_node2open = foldr (uncurry M.insert) (sg_node2open g') opennessUpdate }
+        g'' = g' { sg_node2out = M.adjust (\old -> case old of {Just os -> Just os; Nothing -> Just []}) 
+                                          (sg_node2index g' M.! node) 
+                                          (sg_node2out g') }
         (remDepth,node) S.:< rest = S.viewl frontier
         outs = map fst (runStep stepState node)
         newOuts = filter (`M.notMember` sg_node2index g) outs
         frontier' = foldl (S.|>) rest [(remDepth-1, out) | out <- newOuts, remDepth > 0]
 
-addEdge a b g@(StateGraph i2n n2i n2o n2p n2open) = StateGraph i2n'' n2i'' n2o' n2p' n2open
+addEdge a b g@(StateGraph i2n n2i n2o n2p) = StateGraph i2n'' n2i'' n2o'' n2p'
   where
+    aIsNew = not (M.member a n2i)
     (ia,i2n',n2i') 
-      | M.member a n2i = (n2i M.! a,  i2n,               n2i              )
-      | otherwise      = (M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
+      | aIsNew    = (M.size i2n, M.insert ia a i2n, M.insert a ia n2i)
+      | otherwise = (n2i M.! a,  i2n,               n2i              )
+    bIsNew = not (M.member b n2i')
     (ib,i2n'',n2i'') 
-      | M.member b n2i' = (n2i' M.! b,  i2n',               n2i'              )
-      | otherwise       = (M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
+      | bIsNew    = (M.size i2n', M.insert ib b i2n', M.insert b ib n2i')
+      | otherwise = (n2i' M.! b,  i2n',               n2i'              )
     n2o' = M.alter addB ia n2o
-    addB Nothing = Just [ib]
-    addB (Just os) = if ib `elem` os then Just os else Just (ib:os)
-    n2p' = if M.member ib n2p then n2p else M.insert ib ia n2p
+    n2o'' = if bIsNew then M.insert ib Nothing n2o' else n2o'
+    addB Nothing          = Just (Just [ib])
+    addB (Just Nothing)   = Just (Just [ib])
+    addB (Just (Just os)) = Just $ if ib `elem` os then Just os else Just (ib:os)
+    n2p' = if bIsNew then M.insert ib ia n2p else n2p
 
 

@@ -10,12 +10,12 @@ toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
           concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
                  | i <- [0..n-1],
-                   let style = if M.findWithDefault False i (sg_node2open g)
-                               then ", style=dashed"
-                               else ""] ++
+                   let style = case sg_node2out g M.! i of
+                                 Nothing -> ", style=dashed"
+                                 _       -> ""] ++
           concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
                  | i <- [0..n-1], i `M.member` sg_node2out g, 
-                   j <- sg_node2out g M.! i,
+                   j <- case sg_node2out g M.! i of {Just js -> js; Nothing -> []},
                    let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
                               then " [style=bold, color=red, weight=10]"
                               else " [constraint=false]"] ++

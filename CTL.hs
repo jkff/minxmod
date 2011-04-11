@@ -41,17 +41,34 @@ toBasis (CTLAllGlobally p) = toBasis (CTLNeg (CTLExistsUntil CTLTrue (CTLNeg p))
 toBasis (CTLAllUntil p q) = toBasis (CTLOr (CTLNeg (CTLExistsUntil (CTLNeg q) (CTLNeg (CTLOr p q)))) 
                                            (CTLExistsGlobally (CTLNeg q)))
 
+data Tribool = Known Bool | Unknown deriving (Eq, Show)
+instance Boolean Tribool where
+  true = Known True
+  false = Known False
+  notB (Known b) = Known (not b)
+  notB Unknown = Unknown
+
+  Known True  ||* _          = Known True
+  Known False ||* x          = x
+  Unknown     ||* Known True = Known True
+  Unknown     ||* _          = Unknown
+
+  Known False &&* _           = Known False
+  Known True  &&* x           = x
+  Unknown     &&* Known False = Known False
+  Unknown     &&* _           = Unknown
+
 fixpoint :: (Eq a) => (a -> a) -> a -> a
 fixpoint f a0 = let as = iterate f a0 in fst (head [(x,y) | (x,y) <- zip as (tail as), x == y])
 
 anyB f xs = foldr (||*) false (map f xs)
 
-verify :: (Ord s, Boolean b, Eq b) => CTL (s -> b) -> M.Map s [s] -> M.Map s b
+verify :: (Ord s) => CTL (s -> Bool) -> M.Map s (Maybe [s]) -> M.Map s Tribool
 verify p g = verifyB (toBasis p) g
 
-verifyB :: (Ord s, Boolean b, Eq b) => CTL (s -> b) -> M.Map s [s] -> M.Map s b
+verifyB :: (Ord s) => CTL (s -> Bool) -> M.Map s (Maybe [s]) -> M.Map s Tribool
 verifyB CTLFalse g = fmap (const false) g
-verifyB (CTLPred p) g = M.mapWithKey (\s _ -> p s) g
+verifyB (CTLPred p) g = M.mapWithKey (\s _ -> Known (p s)) g
 verifyB (CTLOr p q) g = M.unionWith (||*) (verifyB p g) (verifyB q g)
 verifyB (CTLNeg p) g = fmap notB (verifyB p g)
 verifyB (CTLExistsGlobally p) g = fixpoint step (fmap (const false) g)
@@ -64,4 +81,5 @@ verifyB (CTLExistsUntil p q) g = fixpoint step (fmap (const false) g)
         psi = verifyB q g
         step = M.unionWith (||*) psi . M.unionWith (&&*) phi . ex g
 
-ex g phi = M.mapWithKey (\s _ -> anyB (phi M.!) (g M.! s)) g
+ex :: (Ord s) => M.Map s (Maybe [s]) -> M.Map s Tribool -> M.Map s Tribool
+ex g phi = M.mapWithKey (\s _ -> case g M.! s of { Nothing -> Unknown; Just outs -> anyB (phi M.!) outs }) g
