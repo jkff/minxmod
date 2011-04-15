@@ -18,23 +18,42 @@ data NBA e = NBA
 -- | Returns: (non-cyclic prefix, cycle body)
 -- Find SCC; mark those SCC that contain an accepting state; check if one is reachable from the SCC containing the initial state.
 findAcceptingCycle :: NBA e -> Maybe ([Int], [Int])
-findAcceptingCycle (NBA {nba_outs = outs, nba_accept = accept, nba_initial = init}) = case pathsToAcceptFromInit of
+findAcceptingCycle (NBA {nba_outs = outs, nba_accept = accept, nba_initial = init}) = case rpathsInitToAccept of
     []  -> Nothing
     p:_ -> Just (unfoldPathThroughSCC p)
   where
-    initStates = [i | (i, ((_,True),_)) <- M.toList sccGraph]
-    pathsFromInit = concatMap (flatten . pathTree []) (dfs sccGraphArr initStates)
-    pathsToAcceptFromInit = [p | p@(i:_) <- pathsFromInit, case sccGraph M.! i of { ((accept,_),_) -> accept }]
-    sccGraphArr = A.accumArray (flip (:)) [] (0, M.size sccGraph) [(i, o) | (i,(_,os)) <- M.toList sccGraph, o <- os]
-    sccGraph = factorGraph ((or *** or) . unzip) componentF ((accept M.!) &&& (init M.!)) structure
+    -- scc graph with marked accept/init nodes...
     structure = fmap (map snd) outs
-    componentMap = M.fromList (components2assocs (findSCC structure))
-    components2assocs = concatMap (\(ci,contents) -> zip contents (repeat ci)) . zip [0..]
-    componentF = (componentMap M.!)
+    sccs = zip [0..] (findSCC structure)
+    node2scc = M.fromList (components2assocs sccs)
+    scc2nodes = M.fromList sccs
+    components2assocs = concatMap (\(ci,contents) -> zip contents (repeat ci))
+    componentF = (node2scc M.!)
+    sccGraph = factorGraph ((or *** or) . unzip) componentF (isInitNode &&& isAcceptNode) structure
+    sccGraphArr = toGraph sccGraph
+
+    toGraph g = A.accumArray (flip (:)) [] (0, M.size g) [(i, o) | (i,(_,os)) <- M.toList g, o <- os]
+
+    isInitScc    i = case sccGraph M.! i of { ((_,  init),_) -> init   }
+    isAcceptScc  i = case sccGraph M.! i of { ((accept,_),_) -> accept }
+    isInitNode   i = accept M.! i
+    isAcceptNode i = init   M.! i
+    
+    -- reversed paths from an initial scc to an accepting scc
+    rpathsInitToAccept = filter (isAcceptScc . head) $ 
+                         concatMap (flatten . pathTree []) . dfs sccGraphArr $
+                         filter isInitScc (M.keys sccGraph)
+
     pathTree p (Node a kids) = Node p' (map (pathTree p') kids) where p' = a:p
-    unfoldPathThroughSCC p = (pathFromInitToAccept, acceptingCycle)
+
+    -- given an init->accept path through scc, generate a path from an init node
+    -- to an accept node and the cycle within the accept scc through that node
+    unfoldRPathI2AThroughSCC rpI2A = (pathFromAcceptToInit, acceptingCycle)
       where
-        pathFromInitToAccept = undefined
+        (acceptScc, initScc) = (first sccPath, last sccPath)
+        (acceptNode, initNode) = (head $ filter isAcceptNode $ scc2nodes M.! acceptScc, 
+                                  head $ filter isInitNode   $ scc2nodes M.! initScc)
+        pathsToInitNode = 
         acceptingCycle = undefined
 
 factorGraph :: ([a] -> b) -> (Int -> Int) -> (Int -> a) -> M.Map Int [Int] -> M.Map Int (b, [Int])
