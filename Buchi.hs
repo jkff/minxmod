@@ -7,6 +7,8 @@ import Data.List
 import qualified Data.Map as M
 import qualified Data.Array as A
 
+import Debug.Trace
+
 -- Non-deterministic Buchi automaton
 data NBA e = NBA 
   {
@@ -15,54 +17,89 @@ data NBA e = NBA
     nba_initial :: M.Map Int Bool
   }
 
+exampleNBA = NBA {
+        nba_outs = M.fromList [
+            (0, aug [5]),
+            (1, aug [0,2,5]),
+            (2, aug [6]),
+            (3, aug [1,6]),
+            (4, aug [5]),
+            (5, aug [2,4]),
+            (6, aug [4])
+            ],
+        nba_accept  = M.fromList $ zip [0..] [False,False,False,False,False,False,True],
+        nba_initial = M.fromList $ zip [0..] [False,True,False,False,False,False,False]
+    }
+  where aug = zip (repeat ())
+
+instance (Show a) => Show (SCC a) where
+  show (AcyclicSCC a) = "AcyclicSCC " ++show a
+  show (CyclicSCC as) = "CyclicSCC " ++show as
+
 -- | Returns: (non-cyclic prefix, cycle body)
--- Find SCC; mark those SCC that contain an accepting state; check if one is reachable from the SCC containing the initial state.
+-- Find SCC; mark those cyclic SCC that contain an accepting state; 
+-- check if one is reachable from the SCC containing the initial state.
 findAcceptingCycle :: NBA e -> Maybe ([Int], [Int])
-findAcceptingCycle (NBA {nba_outs = outs, nba_accept = accept, nba_initial = init}) = case rpathsInitToAccept of
-    []  -> Nothing
-    p:_ -> Just (unfoldPathThroughSCC p)
+findAcceptingCycle (NBA {nba_outs = outs, nba_accept = accept, nba_initial = init}) = case rpaths of
+    [] -> Nothing
+    p:ps -> Just $ unfoldInit2AcceptPathThroughScc p
   where
-    -- scc graph with marked accept/init nodes...
-    structure = fmap (map snd) outs
-    sccs = zip [0..] (findSCC structure)
-    node2scc = M.fromList (components2assocs sccs)
-    scc2nodes = M.fromList sccs
-    components2assocs = concatMap (\(ci,contents) -> zip contents (repeat ci))
-    componentF = (node2scc M.!)
-    sccGraph = factorGraph ((or *** or) . unzip) componentF (isInitNode &&& isAcceptNode) structure
+    sccs = zip [0..] (findSCC g)
+    cyclicAcceptSccInds = [i | (i, c@CyclicSCC{}) <- sccs, any isAcceptNode (flattenSCC c)]
+    initSccInds         = [i | (i, c            ) <- sccs, any isInitNode   (flattenSCC c)]
+    rpaths = findRpathsBetween initSccInds cyclicAcceptSccInds sccGraphArr
+
+    g = fmap (map snd) outs
+    isInitNode   i = init   M.! i
+    isAcceptNode i = accept M.! i
+    sccGraph = factorGraph componentF g
     sccGraphArr = toGraph sccGraph
-
-    toGraph g = A.accumArray (flip (:)) [] (0, M.size g) [(i, o) | (i,(_,os)) <- M.toList g, o <- os]
-
-    isInitScc    i = case sccGraph M.! i of { ((_,  init),_) -> init   }
-    isAcceptScc  i = case sccGraph M.! i of { ((accept,_),_) -> accept }
-    isInitNode   i = accept M.! i
-    isAcceptNode i = init   M.! i
-    
-    -- reversed paths from an initial scc to an accepting scc
-    rpathsInitToAccept = filter (isAcceptScc . head) $ 
-                         concatMap (flatten . pathTree []) . dfs sccGraphArr $
-                         filter isInitScc (M.keys sccGraph)
-
-    pathTree p (Node a kids) = Node p' (map (pathTree p') kids) where p' = a:p
-
-    -- given an init->accept path through scc, generate a path from an init node
-    -- to an accept node and the cycle within the accept scc through that node
-    unfoldRPathI2AThroughSCC rpI2A = (pathFromAcceptToInit, acceptingCycle)
+    node2scc = M.fromList $ concatMap (\(i,c) -> map (\j -> (j,i)) (flattenSCC c)) sccs
+    scc2nodes = M.fromList $ map (\(i, c) -> (i, flattenSCC c)) sccs
+    componentF i = node2scc M.! i
+    findRpathsBetween srcInds dstInds g = 
+        filter ((`M.member` dstIndsSet) . head) $
+        concatMap (flatten . pathTree) $ 
+        dfs g $ srcInds
       where
-        (acceptScc, initScc) = (first sccPath, last sccPath)
-        (acceptNode, initNode) = (head $ filter isAcceptNode $ scc2nodes M.! acceptScc, 
-                                  head $ filter isInitNode   $ scc2nodes M.! initScc)
-        pathsToInitNode = 
-        acceptingCycle = undefined
+        dstIndsSet :: M.Map Int ()
+        dstIndsSet = M.fromList $ zip dstInds (repeat ())
+    
+    unfoldInit2AcceptPathThroughScc p = (stem, cycle)
+      -- p is a reversed path through sccs, first element of p is 
+      -- an accepting cyclic scc, last is an initial scc.
+      -- we should take some accepting node and some initial node
+      -- and find a path between them in the original graph.
+      where
+        (acceptScc, initScc) = (head p, last p)
+        (acceptNodes, initNodes) = (filter isAcceptNode (scc2nodes M.! acceptScc),
+                                    filter isInitNode   (scc2nodes M.! initScc))
+        ps = findRpathsBetween initNodes acceptNodes (toGraph g)
+        stem = reverse $ head ps
+        cycle = findCycle (scc2nodes M.! acceptScc) (head acceptNodes) g
 
-factorGraph :: ([a] -> b) -> (Int -> Int) -> (Int -> a) -> M.Map Int [Int] -> M.Map Int (b, [Int])
-factorGraph reduceMark componentF mark g = mergeWith (,) newMarks newStructure
+toGraph :: M.Map Int [Int] -> Graph
+toGraph g = A.array (0, maximum (M.keys g)) $ M.toList g
+
+pathTree :: Tree Int -> Tree [Int]
+pathTree = pathTree' []
+  where pathTree' p (Node label kids) = let p'=label:p in Node p' (map (pathTree' p') kids)
+
+findCycle :: [Int] -> Int -> M.Map Int [Int] -> [Int]
+findCycle vs v g = reverse (head $ filter (\(n:ns) -> v `elem` g' M.! n) ps)
   where
-    mergeWith f ma mb = M.fromList [(k,f (ma M.! k) (mb M.! k)) | k <- M.keys ma]
-    newMarks = fmap reduceMark $ M.fromListWith (++) [(componentF i,[mark i]) | i <- M.keys g]
-    newStructure = fmap (distinct . map componentF) $ M.mapKeysWith (++) componentF g 
+    g' = restrict vs g
+    ps = concatMap (flatten . pathTree) $ dfs (toGraph g') [v]
+    
+restrict :: [Int] -> M.Map Int [Int] -> M.Map Int [Int]
+restrict vs g = M.fromList $ map (\i -> (i, filter (`M.member` vsSet) (g M.! i))) vs
+  where
+    vsSet = M.fromList $ zip vs (repeat ())
+
+factorGraph :: (Int -> Int) -> M.Map Int [Int] -> M.Map Int [Int]
+factorGraph componentF g = fmap (distinct . map componentF) $ M.mapKeysWith (++) componentF g 
+  where
     distinct = M.keys . M.fromList . (`zip` (repeat ()))
 
-findSCC :: M.Map Int [Int] -> [[Int]]
-findSCC g = map flattenSCC $ stronglyConnComp $ map (\(i,os) -> (i,i,os)) (M.toList g)
+findSCC :: M.Map Int [Int] -> [SCC Int]
+findSCC g = stronglyConnComp $ map (\(i,os) -> (i,i,os)) (M.toList g)
