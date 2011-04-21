@@ -4,7 +4,6 @@ import Data.Graph.Inductive
 import Data.Graph.Inductive.Query.DFS
 import Data.Maybe
 import Data.Ord
-import Data.List
 
 -- Non-deterministic Buchi automaton
 data NBA e = NBA 
@@ -40,7 +39,7 @@ findAcceptingCycle (NBA {nba_graph = g}) = case stem of [] -> Nothing; _ -> Just
     stem  = shortestPathBetween initNodes acceptsInCyclicSCCs g
     cycle = shortestCycleThrough (last stem) g
 
-    shortestCycleThrough v g = minimumBy (comparing length) [p | p <- bft v g, v `elem` suc g (head p)]
+    shortestCycleThrough v g = head [p | p <- bft v g, v `elem` suc g (head p)]
 
     shortestPathBetween froms tos g = init . tail $ esp fromAux toAux g'
       where
