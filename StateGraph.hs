@@ -35,7 +35,7 @@ stateGraph init n = condenseGraph $ addEmptyEdgeLists $
     buildGraph frontier g | S.null frontier = g
                           | otherwise       = buildGraph frontier'  $ g''
       where
-        addEdge' u v g = addEdge u v [0] g
+        addEdge' u v g = addEdge u v [0] g -- TODO: add here
         g' = foldr (addEdge' node) g outs
         g'' = g' { sg_node2out = M.adjust (\old -> case old of {Just os -> Just os; Nothing -> Just []})
                                           (sg_node2index g' M.! node)
