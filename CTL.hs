@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor, MultiParamTypeClasses, FlexibleInstances #-}
 module CTL where
 
 import qualified Data.Map as M
@@ -20,9 +21,9 @@ data CTL p =
   | CTLExistsGlobally (CTL p)
   | CTLAllUntil (CTL p) (CTL p)
   | CTLExistsUntil (CTL p) (CTL p)
-  deriving (Show)
+  deriving (Show, Functor)
 
-toBasis :: (Boolean p) => CTL p -> CTL p
+toBasis :: CTL p -> CTL p
 toBasis CTLFalse = CTLFalse
 toBasis (CTLPred p) = CTLPred p
 toBasis (CTLNeg p) = CTLNeg (toBasis p)
