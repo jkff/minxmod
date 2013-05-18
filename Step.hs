@@ -6,14 +6,17 @@ import Data.List
 import Control.Monad
 import qualified Data.Map as M
 
--- Custom scheduling strategy, stored in StepM.
--- Runs at stepState, chooses which process to run next.
+data Event = InsnExecuted { e_pid :: Pid, e_ip :: Int, e_insn :: Insn }
+instance Show Event where
+  show (InsnExecuted pid ip insn) = show pid ++ "@" ++ show ip ++ ":  " ++ show insn
 
-newtype StepM a = StepM { runStep :: ProgramState -> [(ProgramState, a)] }
+newtype StepM a = StepM { runStep :: ProgramState -> [([Event], ProgramState, a)] }
 instance Monad StepM where
   fail       = error
-  return a   = StepM $ \s -> [(s,a)]
-  sa >>= fsb = StepM $ \s -> concat [ runStep (fsb a) s' | (s', a) <- runStep sa s ]
+  return a   = StepM $ \s -> [([], s,a)]
+  sa >>= fsb = StepM $ \s -> [ (es ++ es', s'', b)
+                             | (es, s', a) <- runStep sa s,
+                               (es', s'', b) <- runStep (fsb a) s']
 
 instance Functor StepM where
   f `fmap` s = s >>= return . f
@@ -41,13 +44,17 @@ stepState = do
                      ; Nothing -> runnableProcs
                      }
    }
-  nondet [stepInsn (pid, prog_insns p !! ip) >> setLastStepped pid
-         | (pid, (_,Running p ip _ _)) <- procsToRun]
+  nondet [stepInsn (pid, insn) >> setLastStepped pid >> addEvent (InsnExecuted pid ip insn)
+         | (pid, (_,Running p ip _ _)) <- procsToRun,
+           let insn = prog_insns p !! ip]
 
 setLastStepped :: Pid -> StepM ()
 setLastStepped pid = do
   st <- getState
   setState (st { st_lastStepped = Just pid })
+
+addEvent :: Event -> StepM ()
+addEvent e = StepM $ \s -> [([e],s,())]
 
 stepInsn :: (Pid, Insn) -> StepM ()
 stepInsn (pid, Label _) = stepNext pid
@@ -106,10 +113,10 @@ stepInsn (pid, Assert s) = do
     _ -> fail $ "Non-boolean in assert: "++show b
 
 getState :: StepM ProgramState
-getState = StepM $ \st -> [(st,st)]
+getState = StepM $ \st -> [([],st,st)]
 
 setState :: ProgramState -> StepM ()
-setState st = StepM $ \_ -> [(st,())]
+setState st = StepM $ \_ -> [([],st,())]
 
 modifyState :: (ProgramState -> ProgramState) -> StepM ()
 modifyState f = getState >>= setState . f

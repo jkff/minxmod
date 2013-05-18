@@ -8,8 +8,6 @@ import qualified Data.Map as M
 import Data.List
 import qualified Data.Sequence as S
 
-type Event = Int
-
 data StateGraph = StateGraph
   {
     sg_index2node :: M.Map Int ProgramState,
@@ -35,15 +33,15 @@ stateGraph init n = condenseGraph $ addEmptyEdgeLists $
     buildGraph frontier g | S.null frontier = g
                           | otherwise       = buildGraph frontier'  $ g''
       where
-        addEdge' u v g = addEdge u v [0] g -- TODO: add here
+        addEdge' u (es,v) g = addEdge u v es g
         g' = foldr (addEdge' node) g outs
         g'' = g' { sg_node2out = M.adjust (\old -> case old of {Just os -> Just os; Nothing -> Just []})
                                           (sg_node2index g' M.! node)
                                           (sg_node2out g') }
         (remDepth,node) S.:< rest = S.viewl frontier
-        outs = map fst (runStep stepState node)
-        newOuts = filter (`M.notMember` sg_node2index g) outs
-        frontier' = foldl (S.|>) rest [(remDepth-1, out) | out <- newOuts, remDepth > 0]
+        outs = [(es, s') | (es, s', _) <- runStep stepState node,
+                           M.notMember s' (sg_node2index g)]
+        frontier' = foldl (S.|>) rest [(remDepth-1, out) | (_,out) <- outs, remDepth > 0]
 
 addEdge a b e g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n'' n2i'' n2o'' n2in' n2p' edges'
   where
