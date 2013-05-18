@@ -6,6 +6,9 @@ import Data.List
 import Control.Monad
 import qualified Data.Map as M
 
+-- Custom scheduling strategy, stored in StepM.
+-- Runs at stepState, chooses which process to run next.
+
 newtype StepM a = StepM { runStep :: ProgramState -> [(ProgramState, a)] }
 instance Monad StepM where
   fail       = error
@@ -23,7 +26,28 @@ stepState = do
       isRunnable pid Running{ proc_waitedMon = Nothing } = True;
       isRunnable pid Running{ proc_waitedMon = Just m  } = case getMonState m st of MonFree -> True; _ -> False
   let runnableProcs = [x | x@(pid, (_,pst)) <- M.toList (st_procs st), isRunnable pid pst]
-  nondet [stepInsn (pid, prog_insns p !! ip) | (pid, (_,Running p ip _ _)) <- runnableProcs]
+  -- Optimization to simplify state graph:
+  -- If the next instruction in the last stepped process is local, just continue
+  -- stepping that process, because it doesn't make a difference.
+  let procsToRun = case st_lastStepped st of {
+     Nothing -> runnableProcs
+   ; Just pid -> let s@(_, lastSteppedState) = st_procs st M.! pid
+                     nextInsn = case lastSteppedState of {
+                       x@Running{} -> Just $ prog_insns (proc_prog x) !! proc_ip x
+                     ; Finished    -> Nothing
+                     }
+                     in case nextInsn of {
+                       Just i -> if isLocal i then [(pid, s)] else runnableProcs
+                     ; Nothing -> runnableProcs
+                     }
+   }
+  nondet [stepInsn (pid, prog_insns p !! ip) >> setLastStepped pid
+         | (pid, (_,Running p ip _ _)) <- procsToRun]
+
+setLastStepped :: Pid -> StepM ()
+setLastStepped pid = do
+  st <- getState
+  setState (st { st_lastStepped = Just pid })
 
 stepInsn :: (Pid, Insn) -> StepM ()
 stepInsn (pid, Label _ i) = do

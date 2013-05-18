@@ -48,7 +48,8 @@ data ProgramState = ProgramState
   { 
     st_procs :: M.Map Pid (String, ProcState),
     st_vars :: M.Map String Value,
-    st_mons :: M.Map String MonState
+    st_mons :: M.Map String MonState,
+    st_lastStepped :: Maybe Pid
   }
 
 instance Show ProgramState where
@@ -72,11 +73,23 @@ initState :: [(String,Value)] -> [String] -> Prog -> ProgramState
 initState vars mons entryPoint = ProgramState {
     st_procs = M.fromList [(Pid 0, ("entry", Running {proc_prog = entryPoint, proc_ip = 0, proc_stack = [], proc_waitedMon = Nothing}))],
     st_vars  = M.fromList vars,
-    st_mons  = M.fromList [(m, MonFree) | m <- mons]
+    st_mons  = M.fromList [(m, MonFree) | m <- mons],
+    st_lastStepped = Nothing
   }
 
 compile :: [Insn] -> Prog
 compile is = Prog {prog_insns = expandBlocks is}
   where
     expandBlocks = concatMap (\i -> case i of { Block is -> expandBlocks is ; j -> [j] })
+
+isLocal :: Insn -> Bool
+isLocal (Block insns) = all isLocal insns
+isLocal Get{} = False
+isLocal Set{} = False
+isLocal Enter{} = False
+isLocal TryEnter{} = False
+isLocal Leave{} = False
+isLocal Spawn{} = False
+isLocal _ = True
+
 

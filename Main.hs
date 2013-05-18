@@ -63,45 +63,6 @@ deadlock = initState [] ["a","b"] (compile [
     ]
   ])
 
--- spin in lock/unlock
-petersonThread id myFlag otherFlag victim claim = compile [ Label "loop" $ nop, Block lock, Block unlock, Jmp "loop" ]
-  where
-    lock = [
-        pushB True,
-        Set myFlag, -- I'm interested
-        pushI id,
-        Set victim, -- You go first
-      Label "wait" $ 
-        Get otherFlag, -- if(!otherFlag) break;
-        unopB not,
-        JmpCond "leaveLock", 
-        Get victim, -- if(victim != i) break;
-        pushI id,
-        cmp (/=),
-        JmpCond "leaveLock",
-        Jmp "wait",
-
-      Label "leaveLock" $ 
-        pushB True,
-        Set claim
-     ]
-
-    unlock = [ 
-        pushB False, 
-        Set claim,
-        pushB False, 
-        Set myFlag
-      ]
-
-petersonDriver = initState [("flagA",BoolValue False), 
-                            ("flagB", BoolValue False), 
-                            ("victim", IntValue 0), 
-                            ("claimA", BoolValue False), 
-                            ("claimB", BoolValue False)] [] $ compile [
-    Spawn "ta" (petersonThread 1 "flagA" "flagB" "victim" "claimA"),
-    Spawn "tb" (petersonThread 1 "flagB" "flagA" "victim" "claimB")
-  ]
-
 {- 
 
 *Main> let g = stateGraph petersonDriver 60
