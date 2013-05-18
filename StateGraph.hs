@@ -39,9 +39,11 @@ stateGraph init n = condenseGraph $ addEmptyEdgeLists $
                                           (sg_node2index g' M.! node)
                                           (sg_node2out g') }
         (remDepth,node) S.:< rest = S.viewl frontier
-        outs = [(es, s') | (es, s', _) <- runStep stepState node,
-                           M.notMember s' (sg_node2index g)]
-        frontier' = foldl (S.|>) rest [(remDepth-1, out) | (_,out) <- outs, remDepth > 0]
+        outs = [(es, s') | (es, s', _) <- runStep stepState node]
+        frontier' = foldl (S.|>) rest [(remDepth-1, out)
+                                      | (_,out) <- outs,
+                                        M.notMember out (sg_node2index g),
+                                        remDepth > 0]
 
 addEdge a b e g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n'' n2i'' n2o'' n2in' n2p' edges'
   where
@@ -82,7 +84,7 @@ stratifiedSource g@(StateGraph i2n n2i n2o n2in n2p edges) i = case (isStratifia
   _ -> i
 
 condenseGraph :: StateGraph -> StateGraph
-condenseGraph g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n' n2i' n2o' n2in' n2p' edges
+condenseGraph g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n' n2i' n2o' n2in' n2p' edges'
   where
     strat = fst . stratifiedTarget g
     isStraight k = k == strat k
@@ -93,5 +95,10 @@ condenseGraph g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n' n2i' n
     n2o' = cleanup $ M.mapWithKey (\i os -> fmap (filter (/= i) . nub . map strat) os) n2o
     n2in' = cleanup $ M.mapWithKey (\i os -> filter (/= i) . nub . map strat $ os) n2in
     n2p' = cleanup $ M.map (stratifiedSource g) n2p
+    -- New edges: <straight node> -> <nub . map strat $ its outputs>
+    
     --TODO filter here
-
+    edges' = M.fromList [((i,j'), es ++ es')
+                        | ((i,j), es) <- M.toList edges,
+                          isStraight i,
+                          let (j', es') = stratifiedTarget g j]
