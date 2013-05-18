@@ -12,21 +12,32 @@ safeLookup k map mapName = case M.lookup k map of
   Just v -> v
 
 toDot :: StateGraph -> String
-toDot g = "digraph g {\n" ++ 
-          concat [show i ++ " [shape=box,label=\"" ++ label i ++ "\"" ++ style ++ "]\n" 
-                 | i <- M.keys (sg_index2node g),
-                   let style = case safeLookup i (sg_node2out g) "sg_node2out" of
-                                 Nothing -> ", style=dashed"
-                                 _       -> ""] ++
-          concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
-                 | i <- M.keys (sg_index2node g),
-                   j <- case safeLookup i (sg_node2out g) "sg_node2out" of {Just js -> js; Nothing -> []},
-                   let attr = (if M.findWithDefault (-1) j (sg_node2prev g) == i
-                               then " [style=bold,color=red,weight=10,label=\""
-                               else " [constraint=false,label=\"") ++
-                               events (i,j) ++ "\"]\n"] ++
-          "}"
+toDot g = unlines [
+  "digraph g {",
+  "node [shape=box]",
+  unlines [
+    unwords [
+       show i,
+       "[label =", quote (label i), 
+       style, "]"
+       ]
+    | i <- M.keys (sg_index2node g),
+      let style = case safeLookup i (sg_node2out g) "sg_node2out" of
+            Nothing -> ", style=dashed"
+            _ -> ""],
+  unlines [ 
+    unwords [
+       show i, "->", show j, attr 
+    ] |
+    i <- M.keys (sg_index2node g),
+    j <- case safeLookup i (sg_node2out g) "sg_node2out" of {Just js -> js; Nothing -> []},
+    let attr =
+            if M.findWithDefault (-1) j (sg_node2prev g) == i
+            then "[style=bold, color=red, weight=10]"
+            else "[constraint=false]"],
+  "}" ]
   where
+    quote s = concat ["\"", s, "\""]
     label n = labelToDot $ safeLookup n (sg_index2node g) "index2node"
     events v = intercalate "\\n" $ map show $ safeLookup v (sg_edges g) "edges"
 
