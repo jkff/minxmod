@@ -24,9 +24,12 @@ toDot g = "digraph g {\n" ++
                    let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
                               then " [style=bold, color=red, weight=10]"
                               else " [constraint=false]"] ++
+          concat [show a ++ " -- " ++ show b ++ " [label = \"" ++ events (a,b) ++ "]\n"
+                 | v@(a,b) <- M.keys (sg_edges)] ++
           "}"
   where
     label n = labelToDot $ safeLookup n (sg_index2node g) "index2node"
+    events v = foldr (++) "\n" $ map show $ safeLookup v (sg_edges g) "edges"
 
 labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
   "V: "++join [v ++ ":" ++ show val 
