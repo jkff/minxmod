@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds, ScopedTypeVariables #-}
 module Peterson where
 
 import qualified Data.Map as M
