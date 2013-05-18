@@ -12,7 +12,8 @@ cmp op = Arith $ \(IntValue b:IntValue a:s) -> [BoolValue (op a b):s]
 
 -- while(true) v++
 incrementer v = compile [
-  Label "loop" $ Get v,
+  Label "loop",
+  Get v,
   unopI (+1), 
   Set v, 
   Jmp "loop"
@@ -20,18 +21,18 @@ incrementer v = compile [
 
 -- while(true) {lock(mon) {if(v1 <= v2) v1++}}
 syncIncrementer v1 v2 mon = compile [
-  Label "loop" $ 
+    Label "loop",
     Enter mon,
     Get v1,
     Get v2,
     cmp (<=),
     JmpCond "ok",
     Jmp "leave",
-  Label "ok" $ 
+    Label "ok",
     Get v1,
     unopI (+1),
     Set v1,
-  Label "leave" $ 
+    Label "leave",
     Leave mon,
     Jmp "loop"
   ]
@@ -46,31 +47,3 @@ main2 = initState [("a", IntValue 1), ("b", IntValue 1)] ["m"] (compile [
  ,Spawn "b" (syncIncrementer "b" "a" "m")
   ])
 
-deadlock = initState [] ["a","b"] (compile [
-  Spawn "ta" $ compile [
-      Label "loop" $ Enter "a",
-      Enter "b",
-      Leave "b",
-      Leave "a",
-      Jmp "loop"
-    ],
-  Spawn "tb" $ compile [
-      Label "loop" $ Enter "b",
-      Enter "a",
-      Leave "a",
-      Leave "b",
-      Jmp "loop"
-    ]
-  ])
-
-{- 
-
-*Main> let g = stateGraph petersonDriver 60
-*Main> let nodes = Data.Map.elems $ sg_index2node g
-*Main> let claimA n = case (st_vars n Data.Map.! "claimA") of {BoolValue True -> True; _ -> False}
-*Main> let claimB n = case (st_vars n Data.Map.! "claimB") of {BoolValue True -> True; _ -> False}
-*Main> [n | n <- nodes, claimA n && claimB n]
-[]
-*Main>
-
--}  

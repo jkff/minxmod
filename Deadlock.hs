@@ -13,14 +13,16 @@ cmp op = Arith $ \(IntValue b:IntValue a:s) -> [BoolValue (op a b):s]
 
 deadlock = initState [] ["a","b"] (compile [
   Spawn "ta" $ compile [
-      Label "loop" $ Enter "a",
+      Label "loop",
+      Enter "a",
       Enter "b",
       Leave "b",
       Leave "a",
       Jmp "loop"
     ],
   Spawn "tb" $ compile [
-      Label "loop" $ Enter "b",
+      Label "loop",
+      Enter "b",
       Enter "a",
       Leave "a",
       Leave "b",

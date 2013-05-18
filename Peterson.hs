@@ -12,14 +12,14 @@ unopB op = Arith $ \(BoolValue a:s) -> [BoolValue (op a):s]
 cmp op = Arith $ \(IntValue b:IntValue a:s) -> [BoolValue (op a b):s]
 
 -- spin in lock/unlock
-petersonThread id myFlag otherFlag victim claim = compile [ Label "loop" $ nop, Block lock, Block unlock, Jmp "loop" ]
+petersonThread id myFlag otherFlag victim claim = compile [ Label "loop", Block lock, Block unlock, Jmp "loop" ]
   where
     lock = [
         pushB True,
         Set myFlag, -- I'm interested
         pushI id,
         Set victim, -- You go first
-      Label "wait" $ 
+        Label "wait",
         Get otherFlag, -- if(!otherFlag) break;
         unopB not,
         JmpCond "leaveLock", 
@@ -29,7 +29,7 @@ petersonThread id myFlag otherFlag victim claim = compile [ Label "loop" $ nop, 
         JmpCond "leaveLock",
         Jmp "wait",
 
-      Label "leaveLock" $ 
+        Label "leaveLock",
         pushB True,
         Set claim
      ]

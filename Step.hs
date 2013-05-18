@@ -50,8 +50,7 @@ setLastStepped pid = do
   setState (st { st_lastStepped = Just pid })
 
 stepInsn :: (Pid, Insn) -> StepM ()
-stepInsn (pid, Label _ i) = do
-  stepInsn (pid, i)
+stepInsn (pid, Label _) = stepNext pid
 stepInsn (pid, Jmp lab) = do
   stepJmp lab pid
 stepInsn (pid, JmpCond lab) = do
@@ -132,7 +131,7 @@ stepJmp lab = modifyProc f
     f r@Running{proc_waitedMon=Nothing} = r{ proc_ip = ip' }
       where 
         p = proc_prog r
-        (Just ip') = findIndex (\insn -> case insn of {Label n _ -> n == lab ; _ -> False}) (prog_insns p)
+        (Just ip') = findIndex (\insn -> case insn of {Label n -> n == lab ; _ -> False}) (prog_insns p)
 
 stepPush :: Value -> Pid -> StepM ()
 stepPush v = modifyProc $ \r@Running{proc_stack=s} -> r{proc_stack=v:s}

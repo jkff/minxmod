@@ -3,7 +3,7 @@ module Types where
 import qualified Data.Map as M
 
 data Insn =
-    Label String Insn
+    Label String
   | Block [Insn]
   | Jmp String
   | JmpCond String
@@ -15,6 +15,20 @@ data Insn =
   | Leave String
   | Spawn String Prog
   | Assert String
+
+instance Show Insn where
+  show (Label s) = "label " ++ s ++ ":"
+  show (Block is) = "block " ++ show is
+  show (Jmp s) = "jmp " ++ s
+  show (JmpCond s) = "jmpcond " ++ s
+  show (Get s) = "get " ++ s
+  show (Set s) = "set " ++ s
+  show (Arith _) = "arith <...>"
+  show (Enter s) = "enter " ++ s
+  show (TryEnter s) = "tryenter " ++ s
+  show (Leave s) = "leave " ++ s
+  show (Spawn s _) = "spawn " ++ s
+  show (Assert s) = "assert " ++ s
 
 data Value = IntValue Int | BoolValue Bool | PidValue Pid deriving (Ord, Eq)
 
@@ -90,7 +104,6 @@ isLocal Enter{} = False
 isLocal TryEnter{} = False
 isLocal Leave{} = False
 isLocal Spawn{} = False
-isLocal (Label _ i) = isLocal i
 isLocal _ = True
 
 
