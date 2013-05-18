@@ -6,9 +6,9 @@ import Data.List
 import Control.Monad
 import qualified Data.Map as M
 
-data Event = InsnExecuted { e_pid :: Pid, e_ip :: Int, e_insn :: Insn }
+data Event = InsnExecuted { e_pid :: Pid, e_ip :: Int, e_insn :: Insn, e_comment :: String }
 instance Show Event where
-  show (InsnExecuted pid ip insn) = show pid ++ "@" ++ show ip ++ ":  " ++ show insn
+  show (InsnExecuted pid ip insn comment) = show pid ++ "@" ++ show ip ++ " " ++ show insn ++ " ; " ++ comment
 
 newtype StepM a = StepM { runStep :: ProgramState -> [([Event], ProgramState, a)] }
 instance Monad StepM where
@@ -44,7 +44,7 @@ stepState = do
                      ; Nothing -> runnableProcs
                      }
    }
-  nondet [stepInsn (pid, insn) >> setLastStepped pid >> addEvent (InsnExecuted pid ip insn)
+  nondet [stepInsn (pid, insn) >> setLastStepped pid
          | (pid, (_,Running p ip _ _)) <- procsToRun,
            let insn = prog_insns p !! ip]
 
@@ -53,42 +53,66 @@ setLastStepped pid = do
   st <- getState
   setState (st { st_lastStepped = Just pid })
 
+getCurrentInsn :: Pid -> StepM (Int, Insn)
+getCurrentInsn pid = do
+  s <- getState
+  let ps = snd $ (st_procs s) M.! pid
+  return (proc_ip ps, prog_insns (proc_prog ps) !! proc_ip ps)
+
+addInsn :: Pid -> StepM ()
+addInsn pid = addInsnWithComment pid ""
+
+addInsnWithComment :: Pid -> String -> StepM ()
+addInsnWithComment pid comment = do
+  (ip, insn) <- getCurrentInsn pid
+  addEvent $ InsnExecuted pid ip insn comment
+
 addEvent :: Event -> StepM ()
 addEvent e = StepM $ \s -> [([e],s,())]
 
 stepInsn :: (Pid, Insn) -> StepM ()
-stepInsn (pid, Label _) = stepNext pid
-stepInsn (pid, Jmp lab) = do
-  stepJmp lab pid
+stepInsn (pid, Label _) = addInsn pid >> stepNext pid
+stepInsn (pid, Jmp lab) = addInsn pid >> stepJmp lab pid
 stepInsn (pid, JmpCond lab) = do
   v <- stepPop pid
   case v of
-    BoolValue True -> stepJmp lab pid
-    BoolValue False -> stepNext pid
+    BoolValue True -> addInsnWithComment pid "true" >> stepJmp lab pid
+    BoolValue False -> addInsnWithComment pid "false" >> stepNext pid
     _ -> fail $ "Non-boolean in JmpCond: "++show v
 stepInsn (pid, Get s) = do
   v <- getVar s
+  addInsnWithComment pid (show v)
   stepPush v pid
   stepNext pid
 stepInsn (pid, Set s) = do
   v <- stepPop pid
+  prevValue <- getVar s
   setVar s v
+  addInsnWithComment pid (show prevValue ++ " -> " ++ show v)
   stepNext pid
 stepInsn (pid, Arith op) = do
   stk <- getStack pid
   let stks' = op stk
+  addInsn pid
   nondet [setStack s' pid >> stepNext pid | s' <- stks']
 stepInsn (pid, Enter m) = do
   b <- tryEnterMon pid m
+  MonOccupied p d <- getMonStateM m
   if b
     then do
+      addInsnWithComment pid ("ok -> " ++ show d)
       clearWaitedMon m pid
       stepNext pid
     else do
+      addInsnWithComment pid ("blocked by " ++ show p)
       setWaitedMon m pid
 stepInsn (pid, TryEnter m) = do
-  f <- tryEnterMon pid m
-  stepPush (BoolValue f) pid
+  b <- tryEnterMon pid m
+  MonOccupied p d <- getMonStateM m
+  if b
+    then addInsnWithComment pid ("ok -> " ++ show d)
+    else addInsnWithComment pid ("blocked by " ++ show p)
+  stepPush (BoolValue b) pid
   stepNext pid
 stepInsn (pid, Leave m) = do
   s <- getMonStateM m
@@ -98,15 +122,18 @@ stepInsn (pid, Leave m) = do
     MonOccupied p d -> do
       if p==pid 
         then do
+          addInsnWithComment pid (if d==1 then "->free" else ("->" ++ show (d-1)))
           setMonState m (if d==1 then MonFree else MonOccupied p (d-1))
           stepNext pid
         else fail "Mon left by non-owner"
 stepInsn (pid, Spawn name p) = do
+  addInsn pid
   pid' <- stepSpawn name p
   stepPush (PidValue pid') pid
   stepNext pid
 stepInsn (pid, Assert s) = do
   b <- stepPop pid
+  addInsnWithComment pid (show b)
   case b of
     BoolValue True -> stepNext pid
     BoolValue False -> fail $ "Assertion failed: "++s
