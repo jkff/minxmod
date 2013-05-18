@@ -13,7 +13,7 @@ safeLookup k map mapName = case M.lookup k map of
 
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
-          concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
+          concat [show i ++ " [shape=box,label=\"" ++ label i ++ "\"" ++ style ++ "]\n" 
                  | i <- M.keys (sg_index2node g),
                    let style = case safeLookup i (sg_node2out g) "sg_node2out" of
                                  Nothing -> ", style=dashed"
@@ -30,15 +30,18 @@ toDot g = "digraph g {\n" ++
     label n = labelToDot $ safeLookup n (sg_index2node g) "index2node"
     events v = intercalate "\\n" $ map show $ safeLookup v (sg_edges g) "edges"
 
-labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
-  "V: "++join [v ++ ":" ++ show val 
-              | (v,val) <- M.toList v]++"\\n"++
-  "M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth 
-              | (m, MonOccupied pid depth) <- M.toList m]++"\\n"++
-  "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk ++ 
-                 maybe "" ("?"++) wm
-              | (pid,(n,Running {proc_ip=ip, proc_stack=stk, proc_waitedMon=wm})) <- M.toList p ]
+labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) = intercalate "\\n" $ filter (not . null) [vars, mons, procs]
   where
-    join = concat . intersperse ","
+    vars = if M.null v
+           then ""
+           else (join [v ++ "=" ++ show val | (v,val) <- M.toList v])
+    mons = if M.null m
+           then ""
+           else ("M: "++join [m ++ ":" ++ show pid ++ "/" ++ show depth 
+                             | (m, MonOccupied pid depth) <- M.toList m])
+    procs = "P: "++join [show pid ++ "=" ++ n ++ ":" ++ show ip ++ show stk ++ 
+                         maybe "" ("?"++) wm
+                        | (pid,(n,Running {proc_ip=ip, proc_stack=stk, proc_waitedMon=wm})) <- M.toList p ]
+    join = intercalate ","
 
 
