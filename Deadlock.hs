@@ -1,8 +1,12 @@
 module Deadlock where
 
+import qualified Data.Map as M
+
 import Types
 import ToDot
 import StateGraph
+import CTL
+import ProgramPred
 
 nop = Arith $ \s -> [s]
 pushI i = Arith $ \s -> [IntValue i:s]
@@ -32,4 +36,7 @@ deadlock = initState [] ["a","b"] (compile [
 
 main = do
   let g = stateGraph deadlock 60
+  let formula = CTLNeg (CTLExistsNext CTLTrue) :: CTL Bool
+  let badStateIndices = verifySG formula g
+  let badStates = [sg_index2node g M.! i | i <- badStateIndices]
   putStrLn $ toDot g

@@ -1,5 +1,8 @@
 module Peterson where
 
+import qualified Data.Map as M
+import CTL
+import ProgramPred
 import Types
 import ToDot
 import StateGraph
@@ -52,5 +55,8 @@ petersonDriver = initState [("flagA",BoolValue False),
 
 main = do
   let g = stateGraph petersonDriver 60
+  let formula = CTLPred (\(ma :: BoolVar "claimA") (mb :: BoolVar "claimB") -> value ma && value mb)
+  let badStateIndices = verifySG formula g
+  let badStates = [sg_index2node g M.! i | i <- badStateIndices]
   putStrLn $ toDot g
 
