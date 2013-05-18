@@ -90,6 +90,7 @@ isLocal Enter{} = False
 isLocal TryEnter{} = False
 isLocal Leave{} = False
 isLocal Spawn{} = False
+isLocal (Label _ i) = isLocal i
 isLocal _ = True
 
 

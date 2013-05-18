@@ -6,23 +6,27 @@ import StateGraph
 import qualified Data.Map as M
 import Data.List
 
+safeLookup :: (Ord k, Show k) => k -> M.Map k v -> String -> v
+safeLookup k map mapName = case M.lookup k map of
+  Nothing -> error $ "Key " ++ show k ++ " not in " ++ mapName
+  Just v -> v
+
 toDot :: StateGraph -> String
 toDot g = "digraph g {\n" ++ 
           concat [show i ++ " [label = \"" ++ label i ++ "\"" ++ style ++ "]\n" 
-                 | i <- [0..n-1],
-                   let style = case sg_node2out g M.! i of
+                 | i <- M.keys (sg_index2node g),
+                   let style = case safeLookup i (sg_node2out g) "sg_node2out" of
                                  Nothing -> ", style=dashed"
                                  _       -> ""] ++
           concat [show i ++ " -> " ++ show j ++ attr ++ "\n" 
-                 | i <- [0..n-1], i `M.member` sg_node2out g, 
-                   j <- case sg_node2out g M.! i of {Just js -> js; Nothing -> []},
+                 | i <- M.keys (sg_index2node g),
+                   j <- case safeLookup i (sg_node2out g) "sg_node2out" of {Just js -> js; Nothing -> []},
                    let attr = if M.findWithDefault (-1) j (sg_node2prev g) == i
                               then " [style=bold, color=red, weight=10]"
                               else " [constraint=false]"] ++
           "}"
   where
-    n = M.size (sg_index2node g)
-    label n = labelToDot (sg_index2node g M.! n)
+    label n = labelToDot $ safeLookup n (sg_index2node g) "index2node"
 
 labelToDot (ProgramState {st_procs=p, st_vars=v, st_mons=m}) =
   "V: "++join [v ++ ":" ++ show val 
