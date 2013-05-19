@@ -8,7 +8,7 @@ import qualified Data.Map as M
 
 data Event = InsnExecuted { e_pid :: Pid, e_ip :: Int, e_insn :: Insn, e_comment :: String }
 instance Show Event where
-  show (InsnExecuted pid ip insn comment) = show pid ++ "@" ++ show ip ++ " " ++ show insn ++ " ; " ++ comment
+  show (InsnExecuted pid ip insn comment) = show pid ++ "@" ++ show ip ++ " " ++ show insn ++ (if null comment then "" else (" ; " ++ comment))
 
 newtype StepM a = StepM { runStep :: ProgramState -> [([Event], ProgramState, a)] }
 instance Monad StepM where
@@ -127,8 +127,8 @@ stepInsn (pid, Leave m) = do
           stepNext pid
         else fail "Mon left by non-owner"
 stepInsn (pid, Spawn name p) = do
-  addInsn pid
   pid' <- stepSpawn name p
+  addInsnWithComment pid (" -> " ++ show pid')
   stepPush (PidValue pid') pid
   stepNext pid
 stepInsn (pid, Assert s) = do

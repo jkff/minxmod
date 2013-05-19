@@ -1,4 +1,5 @@
 digraph g {
+0 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=0\nP: 0=entry:0[]"]
 1 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=0\nP: 0=entry:1[1],1=ta:0[]"]
 3 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=0\nP: 1=ta:0[],2=tb:0[]"]
 6 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=0\nP: 0=entry:1[1],1=ta:2[True]"]
@@ -7,387 +8,439 @@ digraph g {
 14 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=0\nP: 0=entry:1[1],1=ta:4[1]"]
 15 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=0\nP: 1=ta:4[1],2=tb:0[]"]
 16 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=0\nP: 1=ta:2[True],2=tb:2[True]"]
-17 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=0\nP: 1=ta:0[],2=tb:4[1]"]
+17 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=0\nP: 1=ta:0[],2=tb:4[2]"]
 18 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:5[]"]
 20 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:5[],2=tb:0[]"]
+23 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:5[]"]
 25 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:6[]"]
 26 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:6[],2=tb:0[]"]
 27 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=0\nP: 1=ta:4[1],2=tb:2[True]"]
-28 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=0\nP: 1=ta:2[True],2=tb:4[1]"]
-29 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:0[],2=tb:6[]"]
+28 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=0\nP: 1=ta:2[True],2=tb:4[2]"]
+29 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:6[]"]
 34 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:5[],2=tb:2[True]"]
-35 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:5[]"]
+35 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:5[]"]
 41 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:6[],2=tb:2[True]"]
-42 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=0\nP: 1=ta:4[1],2=tb:4[1]"]
-43 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:6[]"]
-49 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:5[]"]
-50 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:4[1]"]
-57 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:4[1]"]
-58 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:6[]"]
+42 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=0\nP: 1=ta:4[1],2=tb:4[2]"]
+43 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:6[]"]
+49 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:5[]"]
+50 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:4[2]"]
+57 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:4[2]"]
+58 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:6[]"]
 61 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:16[True]"]
 62 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:16[True],2=tb:0[]"]
-64 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:5[]"]
+64 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:6[],2=tb:5[]"]
 67 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:6[]"]
-69 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:0[],2=tb:16[True]"]
-75 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:6[]"]
-80 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:18[False]"]
-81 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:18[False],2=tb:0[]"]
-82 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:16[True],2=tb:2[True]"]
-83 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:4[1]"]
-86 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:9[]"]
-87 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:16[True]"]
-88 [shape=box,label="claimA=False,claimB=True,flagA=False,flagB=True,victim=1\nP: 1=ta:0[],2=tb:18[False]"]
-94 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:5[]"]
-99 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:9[]"]
-104 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:20[False]"]
-105 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:20[False],2=tb:0[]"]
-106 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:18[False],2=tb:2[True]"]
-107 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:16[True],2=tb:4[1]"]
-109 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:6[]"]
-110 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:9[]"]
-112 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:16[True]"]
-113 [shape=box,label="claimA=False,claimB=True,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:18[False]"]
-114 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:0[],2=tb:20[False]"]
-120 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:16[True],2=tb:5[]"]
-129 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:16[True]"]
-135 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 1=ta:0[],2=tb:0[]"]
-136 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:20[False],2=tb:2[True]"]
-137 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:18[False],2=tb:4[1]"]
-138 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:16[True],2=tb:6[]"]
-145 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:16[True]"]
-146 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:18[False]"]
-147 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:20[False]"]
-152 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:18[False],2=tb:5[]"]
-157 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:9[]"]
-162 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:18[False]"]
-165 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:2[True]"]
-166 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 1=ta:2[True],2=tb:0[]"]
-168 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:20[False],2=tb:4[1]"]
-169 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:18[False],2=tb:6[]"]
-176 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:18[False]"]
-177 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:20[False]"]
-182 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:20[False],2=tb:5[]"]
-186 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:16[True],2=tb:9[]"]
-189 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:16[True]"]
-193 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:20[False]"]
-194 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:4[1]"]
-195 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:4[1],2=tb:0[]"]
-196 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 1=ta:2[True],2=tb:2[True]"]
-198 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:20[False],2=tb:6[]"]
-207 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:20[False]"]
-214 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:18[False],2=tb:9[]"]
-219 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:18[False]"]
-222 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:4[1],2=tb:2[True]"]
-223 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:4[1]"]
-234 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:20[False],2=tb:9[]"]
-239 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:20[False]"]
-240 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:4[1]"]
-257 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:9[]"]
-260 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:9[],2=tb:2[True]"]
-1 -> 3 [style=bold,color=red,weight=10,label="0@1 spawn tb ; "]
+69 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:16[True]"]
+75 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:6[],2=tb:6[]"]
+76 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:6[]"]
+81 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:18[False]"]
+82 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:18[False],2=tb:0[]"]
+83 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:16[True],2=tb:2[True]"]
+84 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:4[2]"]
+89 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:9[]"]
+90 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:16[True]"]
+91 [shape=box,label="claimA=False,claimB=True,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:18[False]"]
+97 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:9[],2=tb:5[]"]
+104 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:9[]"]
+109 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:20[False]"]
+110 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:20[False],2=tb:0[]"]
+111 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:18[False],2=tb:2[True]"]
+112 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:16[True],2=tb:4[2]"]
+114 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:9[],2=tb:6[]"]
+115 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:6[],2=tb:9[]"]
+116 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:6[]"]
+117 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:9[]"]
+119 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:16[True]"]
+120 [shape=box,label="claimA=False,claimB=True,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:18[False]"]
+121 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:20[False]"]
+127 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:16[True],2=tb:5[]"]
+140 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:16[True]"]
+147 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:20[False],2=tb:2[True]"]
+148 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:18[False],2=tb:4[2]"]
+149 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:16[True],2=tb:6[]"]
+160 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:16[True]"]
+161 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:18[False]"]
+162 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:20[False]"]
+168 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:18[False],2=tb:5[]"]
+173 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:9[],2=tb:9[]"]
+176 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:9[]"]
+181 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:18[False]"]
+185 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:2[True]"]
+186 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 1=ta:2[True],2=tb:0[]"]
+188 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:20[False],2=tb:4[2]"]
+189 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:18[False],2=tb:6[]"]
+200 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:18[False]"]
+201 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:20[False]"]
+203 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=2\nP: 1=ta:0[],2=tb:2[True]"]
+208 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:20[False],2=tb:5[]"]
+212 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:16[True],2=tb:9[]"]
+219 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:16[True]"]
+223 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:5[],2=tb:20[False]"]
+227 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 0=entry:1[1],1=ta:4[1]"]
+228 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:4[1],2=tb:0[]"]
+229 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=1\nP: 1=ta:2[True],2=tb:2[True]"]
+231 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:20[False],2=tb:6[]"]
+242 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:6[],2=tb:20[False]"]
+244 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=False,victim=2\nP: 1=ta:2[True],2=tb:2[True]"]
+245 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:0[],2=tb:4[2]"]
+252 [shape=box,label="claimA=True,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:18[False],2=tb:9[]"]
+259 [shape=box,label="claimA=False,claimB=True,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:18[False]"]
+266 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:4[1],2=tb:2[True]"]
+267 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=1\nP: 1=ta:2[True],2=tb:4[2]"]
+278 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=2\nP: 1=ta:4[1],2=tb:2[True]"]
+279 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:4[2]"]
+282 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:20[False],2=tb:9[]"]
+287 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:9[],2=tb:20[False]"]
+290 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=1\nP: 1=ta:4[1],2=tb:4[2]"]
+297 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=True,victim=2\nP: 1=ta:4[1],2=tb:4[2]"]
+308 [shape=box,label="claimA=False,claimB=False,flagA=False,flagB=True,victim=2\nP: 1=ta:2[True],2=tb:9[]"]
+311 [shape=box,label="claimA=False,claimB=False,flagA=True,flagB=False,victim=1\nP: 1=ta:9[],2=tb:2[True]"]
+0 -> 1 [style=bold,color=red,weight=10,label="0@0 spawn ta ;  -> 1"]
 
-1 -> 6 [style=bold,color=red,weight=10,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+1 -> 3 [style=bold,color=red,weight=10,label="0@1 spawn tb ;  -> 2"]
 
-3 -> 7 [style=bold,color=red,weight=10,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+1 -> 6 [style=bold,color=red,weight=10,label="1@0 label loop:\n1@1 arith <...>"]
 
-3 -> 8 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+3 -> 7 [style=bold,color=red,weight=10,label="1@0 label loop:\n1@1 arith <...>"]
 
-6 -> 7 [constraint=false,label="0@1 spawn tb ; "]
+3 -> 8 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-6 -> 14 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+6 -> 7 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-7 -> 15 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+6 -> 14 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-7 -> 16 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+7 -> 15 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-8 -> 16 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+7 -> 16 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-8 -> 17 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+8 -> 16 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-14 -> 15 [constraint=false,label="0@1 spawn tb ; "]
+8 -> 17 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
+
+14 -> 15 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
 14 -> 18 [style=bold,color=red,weight=10,label="1@4 set victim ; 0 -> 1"]
 
 15 -> 20 [style=bold,color=red,weight=10,label="1@4 set victim ; 0 -> 1"]
 
-15 -> 27 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+15 -> 27 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-16 -> 27 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+16 -> 27 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-16 -> 28 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+16 -> 28 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-17 -> 28 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+17 -> 28 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-17 -> 29 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 1\n2@5 label wait: ; "]
+17 -> 23 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 2"]
 
-18 -> 25 [style=bold,color=red,weight=10,label="1@5 label wait: ; "]
+18 -> 25 [style=bold,color=red,weight=10,label="1@5 label wait:"]
 
-20 -> 26 [style=bold,color=red,weight=10,label="1@5 label wait: ; "]
+20 -> 26 [style=bold,color=red,weight=10,label="1@5 label wait:"]
 
-25 -> 26 [constraint=false,label="0@1 spawn tb ; "]
+23 -> 29 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-25 -> 61 [style=bold,color=red,weight=10,label="1@6 get flagB ; False\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock: ; \n1@15 arith <...> ; "]
+25 -> 26 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-26 -> 62 [style=bold,color=red,weight=10,label="1@6 get flagB ; False\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock: ; \n1@15 arith <...> ; "]
+25 -> 61 [style=bold,color=red,weight=10,label="1@6 get flagB ; False\n1@7 arith <...>\n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock:\n1@15 arith <...>"]
 
-26 -> 41 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+26 -> 62 [style=bold,color=red,weight=10,label="1@6 get flagB ; False\n1@7 arith <...>\n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock:\n1@15 arith <...>"]
+
+26 -> 41 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
 27 -> 34 [style=bold,color=red,weight=10,label="1@4 set victim ; 0 -> 1"]
 
-27 -> 42 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+27 -> 42 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-28 -> 42 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+28 -> 42 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-28 -> 35 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 1"]
+28 -> 35 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 2"]
 
-29 -> 43 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+29 -> 43 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-29 -> 69 [style=bold,color=red,weight=10,label="2@6 get flagA ; False\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; true\n2@14 label leaveLock: ; \n2@15 arith <...> ; "]
+29 -> 69 [style=bold,color=red,weight=10,label="2@6 get flagA ; False\n2@7 arith <...>\n2@8 jmpcond leaveLock ; true\n2@14 label leaveLock:\n2@15 arith <...>"]
 
-34 -> 41 [constraint=false,label="1@5 label wait: ; "]
+34 -> 41 [constraint=false,label="1@5 label wait:"]
 
-35 -> 43 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+35 -> 43 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-41 -> 82 [constraint=false,label="1@6 get flagB ; False\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock: ; \n1@15 arith <...> ; "]
+41 -> 83 [constraint=false,label="1@6 get flagB ; False\n1@7 arith <...>\n1@8 jmpcond leaveLock ; true\n1@14 label leaveLock:\n1@15 arith <...>"]
 
-41 -> 57 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+41 -> 57 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
 42 -> 50 [style=bold,color=red,weight=10,label="1@4 set victim ; 0 -> 1"]
 
-42 -> 49 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 1"]
+42 -> 49 [style=bold,color=red,weight=10,label="2@4 set victim ; 0 -> 2"]
 
-43 -> 58 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+43 -> 58 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-43 -> 87 [style=bold,color=red,weight=10,label="2@6 get flagA ; False\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; true\n2@14 label leaveLock: ; \n2@15 arith <...> ; "]
+43 -> 90 [style=bold,color=red,weight=10,label="2@6 get flagA ; False\n2@7 arith <...>\n2@8 jmpcond leaveLock ; true\n2@14 label leaveLock:\n2@15 arith <...>"]
 
-49 -> 58 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+49 -> 58 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-50 -> 57 [constraint=false,label="1@5 label wait: ; "]
+50 -> 57 [constraint=false,label="1@5 label wait:"]
 
-57 -> 83 [style=bold,color=red,weight=10,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+57 -> 84 [style=bold,color=red,weight=10,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-57 -> 64 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 1"]
+57 -> 64 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 2"]
 
-58 -> 67 [style=bold,color=red,weight=10,label="1@4 set victim ; 1 -> 1"]
+58 -> 67 [style=bold,color=red,weight=10,label="1@4 set victim ; 2 -> 1"]
 
-58 -> 86 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+58 -> 89 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-61 -> 62 [constraint=false,label="0@1 spawn tb ; "]
+61 -> 62 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-61 -> 80 [style=bold,color=red,weight=10,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+61 -> 81 [style=bold,color=red,weight=10,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-62 -> 81 [style=bold,color=red,weight=10,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+62 -> 82 [style=bold,color=red,weight=10,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-62 -> 82 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+62 -> 83 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-64 -> 75 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+64 -> 75 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-67 -> 75 [constraint=false,label="1@5 label wait: ; "]
+67 -> 76 [style=bold,color=red,weight=10,label="1@5 label wait:"]
 
-69 -> 87 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+69 -> 90 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-69 -> 88 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...> ; "]
+69 -> 91 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...>"]
 
-75 -> 109 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+75 -> 114 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-75 -> 110 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+75 -> 115 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-80 -> 81 [constraint=false,label="0@1 spawn tb ; "]
+76 -> 116 [style=bold,color=red,weight=10,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-80 -> 104 [style=bold,color=red,weight=10,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+76 -> 117 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-81 -> 105 [style=bold,color=red,weight=10,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+81 -> 82 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-81 -> 106 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+81 -> 109 [style=bold,color=red,weight=10,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-82 -> 106 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+82 -> 110 [style=bold,color=red,weight=10,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-82 -> 107 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+82 -> 111 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-83 -> 50 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+83 -> 111 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-83 -> 94 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 1"]
+83 -> 112 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-86 -> 99 [style=bold,color=red,weight=10,label="1@4 set victim ; 1 -> 1"]
+84 -> 50 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
 
-86 -> 49 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+84 -> 97 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 2"]
 
-87 -> 112 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+89 -> 104 [style=bold,color=red,weight=10,label="1@4 set victim ; 2 -> 1"]
 
-87 -> 113 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...> ; "]
+89 -> 49 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
 
-88 -> 113 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+90 -> 119 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-88 -> 114 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...> ; "]
+90 -> 120 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...>"]
 
-94 -> 109 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+91 -> 120 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-99 -> 110 [constraint=false,label="1@5 label wait: ; "]
+91 -> 121 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...>"]
 
-104 -> 105 [constraint=false,label="0@1 spawn tb ; "]
+97 -> 114 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-104 -> 165 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; \n1@0 label loop: ; \n1@1 arith <...> ; "]
+104 -> 117 [constraint=false,label="1@5 label wait:"]
 
-105 -> 135 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; "]
+109 -> 110 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-105 -> 136 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+109 -> 185 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop\n1@0 label loop:\n1@1 arith <...>"]
 
-106 -> 136 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+110 -> 186 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop\n1@0 label loop:\n1@1 arith <...>"]
 
-106 -> 137 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+110 -> 147 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-107 -> 137 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+111 -> 147 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-107 -> 120 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 1"]
+111 -> 148 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-109 -> 67 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+112 -> 148 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-109 -> 157 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+112 -> 127 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 2"]
 
-110 -> 157 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+114 -> 149 [constraint=false,label="1@9 get victim ; 2\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; true\n1@14 label leaveLock:\n1@15 arith <...>"]
 
-110 -> 64 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+114 -> 173 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-112 -> 129 [style=bold,color=red,weight=10,label="1@4 set victim ; 1 -> 1"]
+115 -> 173 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-112 -> 146 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...> ; "]
+115 -> 64 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
 
-113 -> 146 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+116 -> 67 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
 
-113 -> 147 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...> ; "]
+116 -> 176 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-114 -> 147 [constraint=false,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+117 -> 176 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-114 -> 135 [constraint=false,label="2@20 set flagB ; True -> False\n2@21 jmp loop ; "]
+117 -> 160 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; true\n2@14 label leaveLock:\n2@15 arith <...>"]
 
-120 -> 138 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+119 -> 140 [style=bold,color=red,weight=10,label="1@4 set victim ; 2 -> 1"]
 
-129 -> 145 [style=bold,color=red,weight=10,label="1@5 label wait: ; "]
+119 -> 161 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...>"]
 
-135 -> 166 [style=bold,color=red,weight=10,label="1@0 label loop: ; \n1@1 arith <...> ; "]
+120 -> 161 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-136 -> 196 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; \n1@0 label loop: ; \n1@1 arith <...> ; "]
+120 -> 162 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...>"]
 
-136 -> 168 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+121 -> 162 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-137 -> 168 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+121 -> 203 [style=bold,color=red,weight=10,label="2@20 set flagB ; True -> False\n2@21 jmp loop\n2@0 label loop:\n2@1 arith <...>"]
 
-137 -> 152 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 1"]
+127 -> 149 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-138 -> 169 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+140 -> 160 [style=bold,color=red,weight=10,label="1@5 label wait:"]
 
-138 -> 186 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+147 -> 229 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop\n1@0 label loop:\n1@1 arith <...>"]
 
-145 -> 189 [style=bold,color=red,weight=10,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+147 -> 188 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-145 -> 176 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...> ; "]
+148 -> 188 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-146 -> 162 [style=bold,color=red,weight=10,label="1@4 set victim ; 1 -> 1"]
+148 -> 168 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 2"]
 
-146 -> 177 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...> ; "]
+149 -> 189 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-147 -> 177 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+149 -> 212 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-147 -> 166 [constraint=false,label="2@20 set flagB ; True -> False\n2@21 jmp loop ; "]
+160 -> 219 [style=bold,color=red,weight=10,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-152 -> 169 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+160 -> 200 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...>"]
 
-157 -> 99 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+161 -> 181 [style=bold,color=red,weight=10,label="1@4 set victim ; 2 -> 1"]
 
-157 -> 94 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+161 -> 201 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...>"]
 
-162 -> 176 [constraint=false,label="1@5 label wait: ; "]
+162 -> 201 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-165 -> 166 [constraint=false,label="0@1 spawn tb ; "]
+162 -> 244 [style=bold,color=red,weight=10,label="2@20 set flagB ; True -> False\n2@21 jmp loop\n2@0 label loop:\n2@1 arith <...>"]
 
-165 -> 194 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+168 -> 189 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-166 -> 195 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+173 -> 212 [constraint=false,label="1@9 get victim ; 2\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; true\n1@14 label leaveLock:\n1@15 arith <...>"]
 
-166 -> 196 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+173 -> 97 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
 
-168 -> 223 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; \n1@0 label loop: ; \n1@1 arith <...> ; "]
+176 -> 104 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
 
-168 -> 182 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 1"]
+176 -> 219 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; true\n2@14 label leaveLock:\n2@15 arith <...>"]
 
-169 -> 198 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+181 -> 200 [constraint=false,label="1@5 label wait:"]
 
-169 -> 214 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+185 -> 186 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-176 -> 219 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+185 -> 227 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-176 -> 207 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...> ; "]
+186 -> 228 [style=bold,color=red,weight=10,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-177 -> 193 [style=bold,color=red,weight=10,label="1@4 set victim ; 1 -> 1"]
+186 -> 229 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-177 -> 195 [constraint=false,label="2@20 set flagB ; True -> False\n2@21 jmp loop ; "]
+188 -> 267 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop\n1@0 label loop:\n1@1 arith <...>"]
 
-182 -> 198 [style=bold,color=red,weight=10,label="2@5 label wait: ; "]
+188 -> 208 [style=bold,color=red,weight=10,label="2@4 set victim ; 1 -> 2"]
 
-186 -> 214 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...> ; "]
+189 -> 231 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-186 -> 120 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+189 -> 252 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-189 -> 129 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+200 -> 259 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-189 -> 219 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...> ; "]
+200 -> 242 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...>"]
 
-193 -> 207 [constraint=false,label="1@5 label wait: ; "]
+201 -> 223 [style=bold,color=red,weight=10,label="1@4 set victim ; 2 -> 1"]
 
-194 -> 195 [constraint=false,label="0@1 spawn tb ; "]
+201 -> 278 [style=bold,color=red,weight=10,label="2@20 set flagB ; True -> False\n2@21 jmp loop\n2@0 label loop:\n2@1 arith <...>"]
 
-194 -> 18 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+203 -> 244 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-195 -> 20 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+203 -> 245 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-195 -> 222 [style=bold,color=red,weight=10,label="2@0 label loop: ; \n2@1 arith <...> ; "]
+208 -> 231 [style=bold,color=red,weight=10,label="2@5 label wait:"]
 
-196 -> 222 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+212 -> 252 [constraint=false,label="1@16 set claimA ; False -> True\n1@17 arith <...>"]
 
-196 -> 223 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+212 -> 127 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
 
-198 -> 29 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; "]
+219 -> 140 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
 
-198 -> 234 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...> ; \n2@8 jmpcond leaveLock ; false"]
+219 -> 259 [style=bold,color=red,weight=10,label="2@16 set claimB ; False -> True\n2@17 arith <...>"]
 
-207 -> 239 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...> ; \n1@8 jmpcond leaveLock ; false"]
+223 -> 242 [constraint=false,label="1@5 label wait:"]
 
-207 -> 26 [constraint=false,label="2@20 set flagB ; True -> False\n2@21 jmp loop ; "]
+227 -> 228 [constraint=false,label="0@1 spawn tb ;  -> 2"]
 
-214 -> 234 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...> ; "]
+227 -> 18 [constraint=false,label="1@4 set victim ; 1 -> 1"]
 
-214 -> 152 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+228 -> 20 [constraint=false,label="1@4 set victim ; 1 -> 1"]
 
-219 -> 162 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+228 -> 266 [style=bold,color=red,weight=10,label="2@0 label loop:\n2@1 arith <...>"]
 
-219 -> 239 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...> ; "]
+229 -> 266 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-222 -> 34 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+229 -> 267 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-222 -> 240 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+231 -> 29 [constraint=false,label="1@20 set flagA ; True -> False\n1@21 jmp loop"]
 
-223 -> 240 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+231 -> 282 [style=bold,color=red,weight=10,label="2@6 get flagA ; True\n2@7 arith <...>\n2@8 jmpcond leaveLock ; false"]
 
-223 -> 35 [constraint=false,label="2@4 set victim ; 1 -> 1"]
+242 -> 287 [constraint=false,label="1@6 get flagB ; True\n1@7 arith <...>\n1@8 jmpcond leaveLock ; false"]
 
-234 -> 257 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop ; \n1@0 label loop: ; \n1@1 arith <...> ; "]
+242 -> 26 [constraint=false,label="2@20 set flagB ; True -> False\n2@21 jmp loop"]
 
-234 -> 182 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+244 -> 278 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
 
-239 -> 193 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+244 -> 279 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
-239 -> 260 [style=bold,color=red,weight=10,label="2@20 set flagB ; True -> False\n2@21 jmp loop ; \n2@0 label loop: ; \n2@1 arith <...> ; "]
+245 -> 279 [constraint=false,label="1@0 label loop:\n1@1 arith <...>"]
 
-240 -> 50 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+245 -> 23 [constraint=false,label="2@4 set victim ; 2 -> 2"]
 
-240 -> 49 [constraint=false,label="2@4 set victim ; 1 -> 1"]
+252 -> 282 [constraint=false,label="1@18 set claimA ; True -> False\n1@19 arith <...>"]
 
-257 -> 86 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...> ; "]
+252 -> 168 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
 
-257 -> 35 [constraint=false,label="2@9 get victim ; 1\n2@10 arith <...> ; \n2@11 arith <...> ; \n2@12 jmpcond leaveLock ; false\n2@13 jmp wait ; "]
+259 -> 181 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
 
-260 -> 34 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...> ; \n1@11 arith <...> ; \n1@12 jmpcond leaveLock ; false\n1@13 jmp wait ; "]
+259 -> 287 [style=bold,color=red,weight=10,label="2@18 set claimB ; True -> False\n2@19 arith <...>"]
 
-260 -> 83 [constraint=false,label="2@2 set flagB ; False -> True\n2@3 arith <...> ; "]
+266 -> 34 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+
+266 -> 290 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
+
+267 -> 290 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
+
+267 -> 35 [constraint=false,label="2@4 set victim ; 1 -> 2"]
+
+278 -> 34 [constraint=false,label="1@4 set victim ; 2 -> 1"]
+
+278 -> 297 [style=bold,color=red,weight=10,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
+
+279 -> 297 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
+
+279 -> 35 [constraint=false,label="2@4 set victim ; 2 -> 2"]
+
+282 -> 308 [style=bold,color=red,weight=10,label="1@20 set flagA ; True -> False\n1@21 jmp loop\n1@0 label loop:\n1@1 arith <...>"]
+
+282 -> 208 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
+
+287 -> 223 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
+
+287 -> 311 [style=bold,color=red,weight=10,label="2@20 set flagB ; True -> False\n2@21 jmp loop\n2@0 label loop:\n2@1 arith <...>"]
+
+290 -> 50 [constraint=false,label="1@4 set victim ; 1 -> 1"]
+
+290 -> 49 [constraint=false,label="2@4 set victim ; 1 -> 2"]
+
+297 -> 50 [constraint=false,label="1@4 set victim ; 2 -> 1"]
+
+297 -> 49 [constraint=false,label="2@4 set victim ; 2 -> 2"]
+
+308 -> 89 [constraint=false,label="1@2 set flagA ; False -> True\n1@3 arith <...>"]
+
+308 -> 35 [constraint=false,label="2@9 get victim ; 2\n2@10 arith <...>\n2@11 arith <...>\n2@12 jmpcond leaveLock ; false\n2@13 jmp wait"]
+
+311 -> 34 [constraint=false,label="1@9 get victim ; 1\n1@10 arith <...>\n1@11 arith <...>\n1@12 jmpcond leaveLock ; false\n1@13 jmp wait"]
+
+311 -> 84 [constraint=false,label="2@2 set flagB ; False -> True\n2@3 arith <...>"]
 
 }

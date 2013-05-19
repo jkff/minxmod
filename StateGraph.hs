@@ -87,7 +87,7 @@ condenseGraph :: StateGraph -> StateGraph
 condenseGraph g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n' n2i' n2o' n2in' n2p' edges'
   where
     strat = fst . stratifiedTarget g
-    isStraight k = k == strat k
+    isStraight k = k==0 || k == strat k
     cleanup :: forall v . M.Map Int v -> M.Map Int v
     cleanup m = M.filterWithKey (\k _ -> isStraight k) m
     i2n' = cleanup i2n
@@ -95,9 +95,6 @@ condenseGraph g@(StateGraph i2n n2i n2o n2in n2p edges) = StateGraph i2n' n2i' n
     n2o' = cleanup $ M.mapWithKey (\i os -> fmap (filter (/= i) . nub . map strat) os) n2o
     n2in' = cleanup $ M.mapWithKey (\i os -> filter (/= i) . nub . map strat $ os) n2in
     n2p' = cleanup $ M.map (stratifiedSource g) n2p
-    -- New edges: <straight node> -> <nub . map strat $ its outputs>
-    
-    --TODO filter here
     edges' = M.fromList [((i,j'), es ++ es')
                         | ((i,j), es) <- M.toList edges,
                           isStraight i,

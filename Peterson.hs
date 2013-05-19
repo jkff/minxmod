@@ -51,13 +51,13 @@ petersonDriver = initState [("flagA",BoolValue False),
                             ("claimA", BoolValue False), 
                             ("claimB", BoolValue False)] [] $ compile [
     Spawn "ta" (petersonThread 1 "flagA" "flagB" "victim" "claimA"),
-    Spawn "tb" (petersonThread 1 "flagB" "flagA" "victim" "claimB")
+    Spawn "tb" (petersonThread 2 "flagB" "flagA" "victim" "claimB")
   ]
 
-main = do
-  let g = stateGraph petersonDriver 60
-  let formula = CTLPred (\(ma :: BoolVar "claimA") (mb :: BoolVar "claimB") -> value ma && value mb)
-  let badStateIndices = verifySG formula g
-  let badStates = [sg_index2node g M.! i | i <- badStateIndices]
-  putStrLn $ toDot g
+g = stateGraph petersonDriver 60
+formula = CTLPred (\(ma :: BoolVar "claimA") (mb :: BoolVar "claimB") -> value ma && value mb)
+badStateIndices = verifySG formula g
+badStates = [sg_index2node g M.! i | i <- badStateIndices]
+
+main = putStrLn $ toDot g
 

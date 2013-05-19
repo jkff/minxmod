@@ -1,30 +1,35 @@
 module Traceback where
 
-import Data.List (unfoldr)
+import Data.List
 import qualified Data.Map as M
 import Data.Functor ((<$>))
 
+import Step
 import Types
 import StateGraph
 
-data Event = InsnExecuted { e_pid :: Pid, e_ip :: Int, e_insn :: Insn } deriving (Show)
-
-data SimpleTraceEvent = LocalSpan { ste_pid :: Pid, ste_insns :: [(Int, Insn)] }
+data SimpleTraceEvent = LocalSpan { ste_pid :: Pid, ste_insns :: [(Int, Insn, String)] }
                       | ContextSwitch { ste_newPid :: Pid }
                       deriving (Show)
 
-sg_node2prev' :: StateGraph -> M.Map Int (Int, Event)
-sg_node2prev' = undefined
-
 traceback :: StateGraph -> Int -> [Event]
-traceback g i = unfoldr source i
-  where source i = genEvent <$> M.lookup i (sg_node2prev' g)
-        genEvent (p, e) = (e, p)
+traceback g i = case M.lookup i (sg_node2prev g) of
+  Just p  -> traceback g p ++ sg_edges g M.! (p, i)
+  Nothing -> []
 
 simplifyTraceback :: [Event] -> [SimpleTraceEvent]
-simplifyTraceback (e@(InsnExecuted pid ip insn):es) = simplify' pid [] (e:es)
+simplifyTraceback (e@(InsnExecuted pid _ _ _):es) = simplify' pid [] (e:es)
   where
     simplify' pid span [] = [LocalSpan pid (reverse span)]
-    simplify' pid span (e@(InsnExecuted pid' ip insn):es)
-      | pid == pid' = simplify' pid ((ip, insn):span) es
+    simplify' pid span (e@(InsnExecuted pid' ip insn comment):es)
+      | pid == pid' = simplify' pid ((ip, insn, comment):span) es
       | otherwise   = LocalSpan pid (reverse span) : ContextSwitch pid' : simplify' pid' [] (e:es)
+
+printTraceback :: StateGraph -> Int -> String
+printTraceback g i = intercalate "\n" $ map printEntry st
+  where
+    st = simplifyTraceback (traceback g i)
+    printEntry (ContextSwitch p) = "---- switch to " ++ show p ++ " ----"
+    printEntry (LocalSpan pid insns) = intercalate "\n" $ map printInsn insns
+      where
+        printInsn (ip, insn, comment) = show pid ++ "\t| " ++ show ip ++ "\t| " ++ show insn ++ " ; " ++ comment

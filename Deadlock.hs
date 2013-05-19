@@ -34,9 +34,9 @@ deadlock = initState [] ["a","b"] (compile [
     ]
   ])
 
-main = do
-  let g = stateGraph deadlock 60
-  let formula = CTLNeg (CTLExistsNext CTLTrue) :: CTL Bool
-  let badStateIndices = verifySG formula g
-  let badStates = [sg_index2node g M.! i | i <- badStateIndices]
-  putStrLn $ toDot g
+g = stateGraph deadlock 60
+formula = CTLNeg (CTLExistsNext CTLTrue) :: CTL Bool
+badStateIndices = verifySG formula g
+badStates = [sg_index2node g M.! i | i <- badStateIndices]
+
+main = putStrLn $ toDot g
