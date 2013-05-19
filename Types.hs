@@ -23,7 +23,7 @@ instance Show Insn where
   show (JmpCond s) = "jmpcond " ++ s
   show (Get s) = "get " ++ s
   show (Set s) = "set " ++ s
-  show (Arith _) = "arith <...>"
+  show (Arith _) = "arith (...)"
   show (Enter s) = "enter " ++ s
   show (TryEnter s) = "tryenter " ++ s
   show (Leave s) = "leave " ++ s
